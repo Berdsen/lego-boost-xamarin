@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using LegoBoostDemo.Model;
+using LegoBoostDemo.Model.Constants;
 
 namespace LegoBoostDemo.Services
 {
@@ -13,5 +15,7 @@ namespace LegoBoostDemo.Services
         Task BlinkAsync();
 
         Task SetColorAsync(BoostColors color);
+
+        Task<string> RequestDeviceNameAsync();
     }
 }

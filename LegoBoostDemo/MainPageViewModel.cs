@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
+using LegoBoostDemo.Model;
+using LegoBoostDemo.Model.Constants;
 using LegoBoostDemo.Services;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
@@ -21,6 +23,7 @@ namespace LegoBoostDemo
         public DelegateCommand ScanCommand { get; }
         public DelegateCommand DisconnectCommand { get; }
         public DelegateCommand BlinkCommand { get; }
+        public DelegateCommand TestCommand { get; }
         public DelegateCommand<object> ColorCommand { get; }
 
         public bool IsConnected
@@ -43,10 +46,20 @@ namespace LegoBoostDemo
             DisconnectCommand = new DelegateCommand(Disconnect);
             BlinkCommand = new DelegateCommand(Blink);
             ColorCommand = new DelegateCommand<object>(SetColor);
+            TestCommand = new DelegateCommand(Test);
 
             DisconnectCommand.ObservesCanExecute(() => IsConnected);
             BlinkCommand.ObservesCanExecute(() => IsConnected);
             ColorCommand.ObservesCanExecute(() => IsConnected);
+            TestCommand.ObservesCanExecute(() => IsConnected);
+        }
+
+        private async void Test()
+        {
+            userDialogs.ShowLoading("Set color");
+            var deviceName= await legoService.RequestDeviceNameAsync().ConfigureAwait(false);
+            userDialogs.Toast(deviceName, TimeSpan.FromSeconds(3));
+            userDialogs.HideLoading();
         }
 
         private async void SetColor(object color)

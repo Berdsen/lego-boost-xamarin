@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Android.Bluetooth;
+using LegoBoostDemo.Model;
+using LegoBoostDemo.Model.Constants;
 using LegoBoostDemo.Services;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
@@ -18,6 +22,7 @@ namespace LegoBoostDemo.Droid.Services
         private IDevice connectedDevice = null;
         private IService connectedDeviceService = null;
         private ICharacteristic connectedDeviceCharacteristic = null;
+        private Hub hub;
 
         public bool IsConnected => connectedDevice != null && connectedDeviceCharacteristic != null;
 
@@ -45,28 +50,28 @@ namespace LegoBoostDemo.Droid.Services
                 }
                 else
                 {
-                    await DisconnectActiveDevice().ConfigureAwait(false);
+                    await DisconnectActiveDeviceAsync().ConfigureAwait(false);
                 }
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e.Message);
-                await DisconnectActiveDevice().ConfigureAwait(false);
+                await DisconnectActiveDeviceAsync().ConfigureAwait(false);
             }
         }
 
         public async Task<bool> TryConnectAsync()
         {
-            await DisconnectActiveDevice().ConfigureAwait(false);
+            await DisconnectActiveDeviceAsync().ConfigureAwait(false);
 
             await adapter.StartScanningForDevicesAsync(new Guid[] { serviceId }, DeviceFilter).ConfigureAwait(false);
 
             return IsConnected;
         }
 
-        public async Task TryDisconnectAsync()
+        public Task TryDisconnectAsync()
         {
-            await DisconnectActiveDevice();
+            return DisconnectActiveDeviceAsync();
         }
 
         public Task BlinkAsync()
@@ -79,16 +84,29 @@ namespace LegoBoostDemo.Droid.Services
             return WriteColorAsync(color);
         }
 
-        private async Task DisconnectActiveDevice()
+        public async Task<string> RequestDeviceNameAsync()
+        {
+            var bytes = await hub.GetPropertyValueAsync(hub.Properties["Name"]).ConfigureAwait(false);
+            return bytes == null || bytes.Length == 0 ? "" : Encoding.UTF8.GetString(bytes);
+        }
+
+        private async Task DisconnectActiveDeviceAsync()
         {
             if (connectedDevice != null)
             {
+                await connectedDeviceCharacteristic.StopUpdatesAsync().ConfigureAwait(false);
                 await adapter.DisconnectDeviceAsync(connectedDevice).ConfigureAwait(false);
+                connectedDeviceCharacteristic = null;
+            }
+
+            if (hub != null)
+            {
+                hub.Dispose();
+                hub = null;
             }
 
             connectedDevice = null;
             connectedDeviceService = null;
-            connectedDeviceCharacteristic = null;
         }
 
         private async Task<bool> TryConnectAsync(IDevice device)
@@ -105,6 +123,10 @@ namespace LegoBoostDemo.Droid.Services
                 if (connectedDeviceCharacteristic == null) return false;
 
                 await InitializationSequenceAsync().ConfigureAwait(false);
+
+                await connectedDeviceCharacteristic.StartUpdatesAsync().ConfigureAwait(false);
+
+                hub = new Hub(connectedDeviceCharacteristic);
 
                 return true;
             }
@@ -146,9 +168,19 @@ namespace LegoBoostDemo.Droid.Services
 
         private Task<bool> WriteColorAsync(BoostColors color)
         {
-            var bytes = new byte[] {0x08, 0x00, 0x81, 0x32, 0x11, 0x51, 0x00, (byte)color};
+            // var bytes = new byte[] {0x08, 0x00, 0x81, 0x32, 0x11, 0x51, 0x00, (byte)color};
+            var bytes = CreateCommandBytes(0x81, new byte[] {0x32, 0x11, 0x51, 0x00, (byte) color});
 
             return connectedDeviceCharacteristic.WriteAsync(bytes);
+        }
+
+        private byte[] CreateCommandBytes(byte command, byte[] payload)
+        {
+            int length = 3 + payload.Length;
+            var listOfBytes = new List<byte>() { (byte) length, 0x00, command };
+            listOfBytes.AddRange(payload);
+
+            return listOfBytes.ToArray();
         }
 
         private bool DeviceFilter(IDevice arg)
@@ -157,7 +189,8 @@ namespace LegoBoostDemo.Droid.Services
 
             System.Diagnostics.Debug.WriteLine(arg.Name);
 
-            if (!(arg.Name?.ToLower() ?? "").Contains("lego")) return false;
+            var name = (arg?.Name ?? "").ToLower();
+            if (!(name.Contains("lego") || name.Contains("move hub"))) return false;
 
             var bluetoothDevice = arg.NativeDevice as BluetoothDevice;
             if (bluetoothDevice?.Type == BluetoothDeviceType.Le) return true;
@@ -166,4 +199,5 @@ namespace LegoBoostDemo.Droid.Services
         }
 
     }
+
 }

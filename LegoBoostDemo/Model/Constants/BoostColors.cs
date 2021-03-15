@@ -1,4 +1,4 @@
-﻿namespace LegoBoostDemo.Services
+﻿namespace LegoBoostDemo.Model.Constants
 {
     public enum BoostColors : byte
     {

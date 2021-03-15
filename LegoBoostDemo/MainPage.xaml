@@ -2,6 +2,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:services="clr-namespace:LegoBoostDemo.Services;assembly=LegoBoostDemo"
+             xmlns:model="clr-namespace:LegoBoostDemo.Model;assembly=LegoBoostDemo"
+             xmlns:constants="clr-namespace:LegoBoostDemo.Model.Constants;assembly=LegoBoostDemo"
              x:Class="LegoBoostDemo.MainPage">
 
     <StackLayout>
@@ -34,16 +36,19 @@
         <Button Grid.Row="0" Grid.Column="1" Text="Red"
                 Command="{Binding ColorCommand}" >
             <Button.CommandParameter>
-                <services:BoostColors>Red</services:BoostColors>
+                <constants:BoostColors>Red</constants:BoostColors>
             </Button.CommandParameter>
         </Button>
 
         <Button Grid.Row="0" Grid.Column="1" Text="Blue"
                 Command="{Binding ColorCommand}" >
             <Button.CommandParameter>
-                <services:BoostColors>Blue</services:BoostColors>
+                <constants:BoostColors>Blue</constants:BoostColors>
             </Button.CommandParameter>
         </Button>
+
+        <Button Grid.Row="0" Grid.Column="1" Text="Testbutton"
+                Command="{Binding TestCommand}" />
 
     </StackLayout>
 
