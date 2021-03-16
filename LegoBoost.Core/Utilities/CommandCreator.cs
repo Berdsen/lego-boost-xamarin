@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LegoBoostDemo.Utilities
+namespace LegoBoost.Core.Utilities
 {
     public class CommandCreator
     {

@@ -1,6 +1,6 @@
-﻿using LegoBoostDemo.Model.Responses;
+﻿using LegoBoost.Core.Model.Responses;
 
-namespace LegoBoostDemo.Utilities
+namespace LegoBoost.Core.Utilities
 {
     public class ResponseParser
     {

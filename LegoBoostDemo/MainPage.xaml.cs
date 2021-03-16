@@ -8,10 +8,5 @@ namespace LegoBoostDemo
         {
             InitializeComponent();
         }
-
-        protected override void OnBindingContextChanged()
-        {
-            base.OnBindingContextChanged();
-        }
     }
 }

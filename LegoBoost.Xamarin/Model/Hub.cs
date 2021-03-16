@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using LegoBoostDemo.Model.Constants;
-using LegoBoostDemo.Model.Responses;
-using LegoBoostDemo.Utilities;
+﻿using LegoBoost.Core.Model.Constants;
+using LegoBoost.Core.Model.Responses;
+using LegoBoost.Core.Utilities;
+using LegoBoost.Xamarin.Utilities;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace LegoBoostDemo.Model
+namespace LegoBoost.Xamarin.Model
 {
     public class Hub : IDisposable
     {
@@ -15,7 +16,7 @@ namespace LegoBoostDemo.Model
         private bool waitingForUpdate = false;
 
         public Dictionary<string, HubProperty> Properties { get; }
-        
+
         public Hub(ICharacteristic hubCharacteristic)
         {
             this.hubCharacteristic = hubCharacteristic;
@@ -52,7 +53,7 @@ namespace LegoBoostDemo.Model
         public Task<HubPropertyResponseMessage> GetPropertyUpdate(HubProperty property)
         {
             waitingForUpdate = true;
-            
+
             return TaskBuilder.CreateTaskAsync<HubPropertyResponseMessage>(() =>
                 {
                     var bytes = CommandCreator.CreateCommandBytes(HubProperties.Command, new byte[] { property.PropertyReference, HubProperties.PropertyOperations.RequestUpdate });
@@ -107,17 +108,17 @@ namespace LegoBoostDemo.Model
         }
 
         public string PropertyName { get; }
-        
+
         public string PropertyDescription { get; }
-        
+
         public byte PropertyReference { get; }
 
         public bool CanSet { get; set; }
-        
+
         public bool CanEnableUpdate { get; set; }
-        
+
         public bool CanDisableUpdate { get; set; }
-        
+
         public bool CanReset { get; set; }
 
         public bool CanRequestUpdate { get; set; }
@@ -136,7 +137,7 @@ namespace LegoBoostDemo.Model
             }
 
             List<byte> byteList = new List<byte> { property.PropertyReference, 0x01 };
-            
+
             if (data != null && data.Length > 0)
             {
                 byteList.AddRange(data);
@@ -170,7 +171,7 @@ namespace LegoBoostDemo.Model
     public interface IProperty
     {
         string PropertyName { get; }
-        
+
         string PropertyDescription { get; }
 
         byte PropertyReference { get; }
@@ -187,7 +188,7 @@ namespace LegoBoostDemo.Model
         bool CanReset { get; set; }
 
         bool CanRequestUpdate { get; set; }
-        
+
         bool CanUpdate { get; set; }
     }
 }

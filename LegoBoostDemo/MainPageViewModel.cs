@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
-using LegoBoostDemo.Model;
-using LegoBoostDemo.Model.Constants;
-using LegoBoostDemo.Services;
+using LegoBoost.Core.Model.Constants;
+using LegoBoost.Core.Services;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Prism.Commands;

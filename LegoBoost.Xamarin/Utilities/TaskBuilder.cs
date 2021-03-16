@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Plugin.BLE.Abstractions.Contracts;
+﻿using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
+using System;
+using System.Threading.Tasks;
 
-namespace LegoBoostDemo.Utilities
+namespace LegoBoost.Xamarin.Utilities
 {
     public class TaskBuilder
     {

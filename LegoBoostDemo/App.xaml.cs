@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using Acr.UserDialogs;
+using LegoBoost.Core.Services;
+using LegoBoostDemo.Droid.Services;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Prism;
@@ -20,6 +22,8 @@ namespace LegoBoostDemo
         {
             containerRegistry.RegisterInstance<IBluetoothLE>(CrossBluetoothLE.Current);
             containerRegistry.RegisterInstance<IUserDialogs>(UserDialogs.Instance);
+
+            containerRegistry.RegisterSingleton<ILegoService, BluetoothLegoService>();
 
             // base navigation
             containerRegistry.RegisterForNavigation<MainPage, MainPageViewModel>();

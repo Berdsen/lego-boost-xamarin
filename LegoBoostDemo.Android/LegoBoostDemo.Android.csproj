@@ -67,7 +67,6 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\BluetoothLegoService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -94,6 +93,14 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LegoBoost.Core\LegoBoost.Core.csproj">
+      <Project>{8A005058-62CA-41B5-87F7-04766641EED3}</Project>
+      <Name>LegoBoost.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LegoBoost.Xamarin\LegoBoost.Xamarin.csproj">
+      <Project>{2b058823-09ae-43ac-a936-cbea0d385759}</Project>
+      <Name>LegoBoost.Xamarin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LegoBoostDemo\LegoBoostDemo.csproj">
       <Project>{B893C65C-0A63-4DC1-B88B-5F3A5C8A73A3}</Project>
       <Name>LegoBoostDemo</Name>

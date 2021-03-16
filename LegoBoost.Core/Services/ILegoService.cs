@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-using LegoBoostDemo.Model;
-using LegoBoostDemo.Model.Constants;
+using LegoBoost.Core.Model.Constants;
 
-namespace LegoBoostDemo.Services
+namespace LegoBoost.Core.Services
 {
     public interface ILegoService
     {

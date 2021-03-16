@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoBoostDemo.Android", "LegoBoostDemo.Android\LegoBoostDemo.Android.csproj", "{CDE83113-C45F-4274-87EE-4CB3B7B7FD87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoBoostDemo", "LegoBoostDemo\LegoBoostDemo.csproj", "{CA42C814-6AB5-47B1-A495-FB334FD27837}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegoBoostDemo", "LegoBoostDemo\LegoBoostDemo.csproj", "{CA42C814-6AB5-47B1-A495-FB334FD27837}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoBoost.Core", "LegoBoost.Core\LegoBoost.Core.csproj", "{8A005058-62CA-41B5-87F7-04766641EED3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoBoost.Xamarin", "LegoBoost.Xamarin\LegoBoost.Xamarin.csproj", "{2B058823-09AE-43AC-A936-CBEA0D385759}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +29,14 @@ Global
 		{CA42C814-6AB5-47B1-A495-FB334FD27837}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA42C814-6AB5-47B1-A495-FB334FD27837}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CA42C814-6AB5-47B1-A495-FB334FD27837}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8A005058-62CA-41B5-87F7-04766641EED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A005058-62CA-41B5-87F7-04766641EED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A005058-62CA-41B5-87F7-04766641EED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A005058-62CA-41B5-87F7-04766641EED3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B058823-09AE-43AC-A936-CBEA0D385759}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B058823-09AE-43AC-A936-CBEA0D385759}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B058823-09AE-43AC-A936-CBEA0D385759}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B058823-09AE-43AC-A936-CBEA0D385759}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
