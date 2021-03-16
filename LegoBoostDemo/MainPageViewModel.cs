@@ -19,11 +19,11 @@ namespace LegoBoostDemo
         private IUserDialogs userDialogs;
         private bool isConnected;
 
+        public DelegateCommand<object> DisconnectCommand { get; }
+        public DelegateCommand<object> ColorCommand { get; }
         public DelegateCommand ScanCommand { get; }
-        public DelegateCommand DisconnectCommand { get; }
         public DelegateCommand BlinkCommand { get; }
         public DelegateCommand TestCommand { get; }
-        public DelegateCommand<object> ColorCommand { get; }
 
         public bool IsConnected
         {
@@ -42,14 +42,14 @@ namespace LegoBoostDemo
             this.userDialogs = userDialogs;
 
             ScanCommand = new DelegateCommand(Scan);
-            DisconnectCommand = new DelegateCommand(Disconnect);
-            BlinkCommand = new DelegateCommand(Blink);
+            DisconnectCommand = new DelegateCommand<object>(Disconnect);
             ColorCommand = new DelegateCommand<object>(SetColor);
+            BlinkCommand = new DelegateCommand(Blink);
             TestCommand = new DelegateCommand(Test);
 
             DisconnectCommand.ObservesCanExecute(() => IsConnected);
-            BlinkCommand.ObservesCanExecute(() => IsConnected);
             ColorCommand.ObservesCanExecute(() => IsConnected);
+            BlinkCommand.ObservesCanExecute(() => IsConnected);
             TestCommand.ObservesCanExecute(() => IsConnected);
         }
 
@@ -63,12 +63,11 @@ namespace LegoBoostDemo
 
         private async void SetColor(object color)
         {
-            if (color is BoostColors bc)
-            {
-                userDialogs.ShowLoading("Set color");
-                await legoService.SetColorAsync(bc).ConfigureAwait(false);
-                userDialogs.HideLoading();
-            }
+            if (!(color is BoostColors bc)) return;
+
+            userDialogs.ShowLoading("Set color");
+            await legoService.SetColorAsync(bc).ConfigureAwait(false);
+            userDialogs.HideLoading();
         }
 
         private async void Blink()
@@ -78,10 +77,14 @@ namespace LegoBoostDemo
             userDialogs.HideLoading();
         }
 
-        private async void Disconnect()
+        private async void Disconnect(object shutdown)
         {
             userDialogs.ShowLoading("Disconnecting");
-            await legoService.TryDisconnectAsync().ConfigureAwait(false);
+            if (shutdown is bool b && b)
+                await legoService.ShutDownAsync().ConfigureAwait(false);
+            else
+                await legoService.DisconnectAsync().ConfigureAwait(false);
+
             userDialogs.HideLoading();
             IsConnected = false;
 

@@ -69,9 +69,14 @@ namespace LegoBoostDemo.Droid.Services
             return IsConnected;
         }
 
-        public Task TryDisconnectAsync()
+        public Task DisconnectAsync()
         {
             return DisconnectActiveDeviceAsync();
+        }
+
+        public Task ShutDownAsync()
+        {
+            return DisconnectActiveDeviceAsync(true);
         }
 
         public Task BlinkAsync()
@@ -95,17 +100,21 @@ namespace LegoBoostDemo.Droid.Services
             return returnValue;
         }
 
-        private async Task DisconnectActiveDeviceAsync()
+        private async Task DisconnectActiveDeviceAsync(bool shutDown = false)
         {
-            if (hub != null)
-            {
-                await hub.DisconnectAsync().ConfigureAwait(false);
-                hub.Dispose();
-                hub = null;
-            }
-
             if (connectedDevice != null)
             {
+                if (hub != null)
+                {
+                    var result =
+                        shutDown ?
+                            await hub.ShutDownAsync().ConfigureAwait(false) :
+                            await hub.DisconnectAsync().ConfigureAwait(false);
+
+                    hub.Dispose();
+                    hub = null;
+                }
+
                 await connectedDeviceCharacteristic.StopUpdatesAsync().ConfigureAwait(false);
                 await adapter.DisconnectDeviceAsync(connectedDevice).ConfigureAwait(false);
                 connectedDeviceCharacteristic = null;

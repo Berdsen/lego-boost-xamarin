@@ -9,7 +9,9 @@ namespace LegoBoost.Core.Services
 
         Task<bool> TryConnectAsync();
 
-        Task TryDisconnectAsync();
+        Task DisconnectAsync();
+        
+        Task ShutDownAsync();
 
         Task BlinkAsync();
 

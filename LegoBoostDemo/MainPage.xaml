@@ -25,8 +25,11 @@
         <Button Grid.Row="0" Grid.Column="1" Text="Scan"
                 Command="{Binding ScanCommand}" />
 
+        <Button Grid.Row="0" Grid.Column="1" Text="Shutdown"
+                Command="{Binding DisconnectCommand}" CommandParameter="{StaticResource TrueValue}"/>
+
         <Button Grid.Row="0" Grid.Column="1" Text="Disconnect"
-                Command="{Binding DisconnectCommand}" />
+                Command="{Binding DisconnectCommand}" CommandParameter="{StaticResource FalseValue}" />
 
         <Button Grid.Row="0" Grid.Column="1" Text="Blink"
                 Command="{Binding BlinkCommand}" />

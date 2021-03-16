@@ -63,14 +63,18 @@ namespace LegoBoost.Xamarin.Model
             System.Diagnostics.Debug.WriteLine($"Value: {e.Characteristic.Value}");
         }
 
-        public async Task DisconnectAsync()
+        public async Task<bool> DisconnectAsync()
+        {
+            var result = await Actions[HubActions.ActionNames.Disconnect].ExecuteAsync().ConfigureAwait(false);
+
+            return result != null;
+        }
+
+        public async Task<bool> ShutDownAsync()
         {
             var result = await Actions[HubActions.ActionNames.SwitchHubOff].ExecuteAsync().ConfigureAwait(false);
 
-            if (result != null)
-            {
-
-            }
+            return result != null;
         }
 
         public void Dispose()
