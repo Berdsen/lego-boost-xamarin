@@ -1,7 +1,4 @@
 ﻿using LegoBoost.Core.Model.Constants;
-using LegoBoost.Core.Model.Responses;
-using LegoBoost.Core.Utilities;
-using LegoBoost.Xamarin.Utilities;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
 using System;
@@ -13,73 +10,67 @@ namespace LegoBoost.Xamarin.Model
     public class Hub : IDisposable
     {
         private ICharacteristic hubCharacteristic;
-        private bool waitingForUpdate = false;
 
         public Dictionary<string, HubProperty> Properties { get; }
+
+        public Dictionary<string, HubAction> Actions { get; }
 
         public Hub(ICharacteristic hubCharacteristic)
         {
             this.hubCharacteristic = hubCharacteristic;
             this.hubCharacteristic.ValueUpdated += ValueUpdated;
 
-            Properties = new Dictionary<string, HubProperty>
-            {
-                {HubProperties.PropertyNames.AdvertisingName, new HubProperty(new HubPropertyConfig("Adv. Name", "", HubProperties.PropertyBytes.AdvertisingName) {CanSet = true, CanEnableUpdate = true, CanDisableUpdate = true, CanReset = true})},
-                {HubProperties.PropertyNames.Button, new HubProperty(new HubPropertyConfig("Button", "", HubProperties.PropertyBytes.Button) {CanEnableUpdate = true, CanDisableUpdate = true})},
-                {HubProperties.PropertyNames.FirmwareVersion, new HubProperty(new HubPropertyConfig("FW Version", "", HubProperties.PropertyBytes.FirmwareVersion))},
-                {HubProperties.PropertyNames.HardwareVersion, new HubProperty(new HubPropertyConfig("HW Version", "", HubProperties.PropertyBytes.HardwareVersion))},
-                {HubProperties.PropertyNames.Rssi, new HubProperty(new HubPropertyConfig("RSSI", "", HubProperties.PropertyBytes.Rssi) {CanEnableUpdate = true, CanDisableUpdate = true})},
-                {HubProperties.PropertyNames.BatteryVoltage, new HubProperty(new HubPropertyConfig("Battery Voltage", "", HubProperties.PropertyBytes.BatteryVoltage) {CanEnableUpdate = true, CanDisableUpdate = true})},
-                {HubProperties.PropertyNames.BatteryType, new HubProperty(new HubPropertyConfig("Battery Type", "", HubProperties.PropertyBytes.BatteryType))},
-                {HubProperties.PropertyNames.ManufacturerName, new HubProperty(new HubPropertyConfig("Manufacturer Name", "", HubProperties.PropertyBytes.ManufacturerName))},
-                {HubProperties.PropertyNames.RadioFirmwareVersion, new HubProperty(new HubPropertyConfig("Radio Firmware Version", "", HubProperties.PropertyBytes.RadioFirmwareVersion))},
-                {HubProperties.PropertyNames.LWPProtocolVersion, new HubProperty(new HubPropertyConfig("LWP Protocol Version", "", HubProperties.PropertyBytes.LWPProtocolVersion))},
-                {HubProperties.PropertyNames.SystemTypeId, new HubProperty(new HubPropertyConfig("System Type ID", "", HubProperties.PropertyBytes.SystemTypeId))},
-                {HubProperties.PropertyNames.HardwareNetworkId, new HubProperty(new HubPropertyConfig("H/W NetWork ID", "", HubProperties.PropertyBytes.HardwareNetworkId) {CanSet = true, CanReset = true})},
-                {HubProperties.PropertyNames.PrimaryMacAdress, new HubProperty(new HubPropertyConfig("Primary MAC adress", "", HubProperties.PropertyBytes.PrimaryMacAdress))},
-                {HubProperties.PropertyNames.SecondaryMacAdress, new HubProperty(new HubPropertyConfig("Secondary MAC adress", "", HubProperties.PropertyBytes.SecondaryMacAdress))},
-                {HubProperties.PropertyNames.HardwareNetworkFamily, new HubProperty(new HubPropertyConfig("H/W Network Family", "", HubProperties.PropertyBytes.HardwareNetworkFamily) {CanSet = true})}
-            };
+            Properties = new Dictionary<string, HubProperty>();
+            Actions = new Dictionary<string, HubAction>();
+
+            InitializeProperties();
+            InitializeActions();
+        }
+
+        private void InitializeProperties()
+        {
+            Properties.Add(HubProperties.PropertyNames.AdvertisingName, new HubProperty(hubCharacteristic, new HubPropertyConfig("Adv. Name", "", HubProperties.PropertyBytes.AdvertisingName) { CanSet = true, CanEnableUpdate = true, CanDisableUpdate = true, CanReset = true }));
+            Properties.Add(HubProperties.PropertyNames.Button, new HubProperty(hubCharacteristic, new HubPropertyConfig("Button", "", HubProperties.PropertyBytes.Button) { CanEnableUpdate = true, CanDisableUpdate = true }));
+            Properties.Add(HubProperties.PropertyNames.FirmwareVersion, new HubProperty(hubCharacteristic, new HubPropertyConfig("FW Version", "", HubProperties.PropertyBytes.FirmwareVersion)));
+            Properties.Add(HubProperties.PropertyNames.HardwareVersion, new HubProperty(hubCharacteristic, new HubPropertyConfig("HW Version", "", HubProperties.PropertyBytes.HardwareVersion)));
+            Properties.Add(HubProperties.PropertyNames.Rssi, new HubProperty(hubCharacteristic, new HubPropertyConfig("RSSI", "", HubProperties.PropertyBytes.Rssi) { CanEnableUpdate = true, CanDisableUpdate = true }));
+            Properties.Add(HubProperties.PropertyNames.BatteryVoltage, new HubProperty(hubCharacteristic, new HubPropertyConfig("Battery Voltage", "", HubProperties.PropertyBytes.BatteryVoltage) { CanEnableUpdate = true, CanDisableUpdate = true }));
+            Properties.Add(HubProperties.PropertyNames.BatteryType, new HubProperty(hubCharacteristic, new HubPropertyConfig("Battery Type", "", HubProperties.PropertyBytes.BatteryType)));
+            Properties.Add(HubProperties.PropertyNames.ManufacturerName, new HubProperty(hubCharacteristic, new HubPropertyConfig("Manufacturer Name", "", HubProperties.PropertyBytes.ManufacturerName)));
+            Properties.Add(HubProperties.PropertyNames.RadioFirmwareVersion, new HubProperty(hubCharacteristic, new HubPropertyConfig("Radio Firmware Version", "", HubProperties.PropertyBytes.RadioFirmwareVersion)));
+            Properties.Add(HubProperties.PropertyNames.LWPProtocolVersion, new HubProperty(hubCharacteristic, new HubPropertyConfig("LWP Protocol Version", "", HubProperties.PropertyBytes.LWPProtocolVersion)));
+            Properties.Add(HubProperties.PropertyNames.SystemTypeId, new HubProperty(hubCharacteristic, new HubPropertyConfig("System Type ID", "", HubProperties.PropertyBytes.SystemTypeId)));
+            Properties.Add(HubProperties.PropertyNames.HardwareNetworkId, new HubProperty(hubCharacteristic, new HubPropertyConfig("H/W NetWork ID", "", HubProperties.PropertyBytes.HardwareNetworkId) {CanSet = true, CanReset = true}));
+            Properties.Add(HubProperties.PropertyNames.PrimaryMacAdress, new HubProperty(hubCharacteristic, new HubPropertyConfig("Primary MAC adress", "", HubProperties.PropertyBytes.PrimaryMacAdress)));
+            Properties.Add(HubProperties.PropertyNames.SecondaryMacAdress, new HubProperty(hubCharacteristic, new HubPropertyConfig("Secondary MAC adress", "", HubProperties.PropertyBytes.SecondaryMacAdress)));
+            Properties.Add(HubProperties.PropertyNames.HardwareNetworkFamily, new HubProperty(hubCharacteristic, new HubPropertyConfig("H/W Network Family", "", HubProperties.PropertyBytes.HardwareNetworkFamily) {CanSet = true}));
+        }
+
+        private void InitializeActions()
+        {
+            Actions.Add(HubActions.ActionNames.SwitchHubOff, new HubAction(hubCharacteristic, HubActions.ActionNames.SwitchHubOff, "", HubActions.ActionBytes.SwitchHubOff, HubActions.ActionBytes.HubWillSwitchOff));
+            Actions.Add(HubActions.ActionNames.Disconnect, new HubAction(hubCharacteristic, HubActions.ActionNames.Disconnect, "", HubActions.ActionBytes.Disconnect, HubActions.ActionBytes.HubWillDisconnect));
+            Actions.Add(HubActions.ActionNames.VccPortControlOn, new HubAction(hubCharacteristic, HubActions.ActionNames.VccPortControlOn, "", HubActions.ActionBytes.VccPortControlOn));
+            Actions.Add(HubActions.ActionNames.VccPortControlOff, new HubAction(hubCharacteristic, HubActions.ActionNames.VccPortControlOff, "", HubActions.ActionBytes.VccPortControlOff));
+            Actions.Add(HubActions.ActionNames.ActivateBusy, new HubAction(hubCharacteristic, HubActions.ActionNames.ActivateBusy, "", HubActions.ActionBytes.ActivateBusy));
+            Actions.Add(HubActions.ActionNames.DeactivateBusy, new HubAction(hubCharacteristic, HubActions.ActionNames.DeactivateBusy, "", HubActions.ActionBytes.DeactivateBusy));
+            Actions.Add(HubActions.ActionNames.ShutdownImmediately, new HubAction(hubCharacteristic, HubActions.ActionNames.ShutdownImmediately, "", HubActions.ActionBytes.ShutdownImmediately));
         }
 
         private void ValueUpdated(object sender, CharacteristicUpdatedEventArgs e)
         {
-            if (waitingForUpdate) return;
-
             System.Diagnostics.Debug.WriteLine($"Name: {e.Characteristic.Name}");
             System.Diagnostics.Debug.WriteLine($"Value: {e.Characteristic.Value}");
         }
 
-        public Task<HubPropertyResponseMessage> GetPropertyUpdate(HubProperty property)
+        public async Task DisconnectAsync()
         {
-            waitingForUpdate = true;
+            var result = await Actions[HubActions.ActionNames.SwitchHubOff].ExecuteAsync().ConfigureAwait(false);
 
-            return TaskBuilder.CreateTaskAsync<HubPropertyResponseMessage>(() =>
-                {
-                    var bytes = CommandCreator.CreateCommandBytes(HubProperties.Command, new byte[] { property.PropertyReference, HubProperties.PropertyOperations.RequestUpdate });
-                    hubCharacteristic.WriteAsync(bytes);
-                },
-                (complete, reject) => (sender, args) =>
-                {
-                    var message = ResponseParser.ParseMessage(args.Characteristic.Value) as HubPropertyResponseMessage;
-                    waitingForUpdate = false;
+            if (result != null)
+            {
 
-                    if (message == null || message.MessageType != 0x01 || message.Property != property.PropertyReference || message.Method != HubProperties.PropertyOperations.Update)
-                    {
-                        reject(new Exception("wrong response type"));
-                        return;
-                    }
-
-                    complete(message);
-                },
-                hubCharacteristic);
-        }
-
-        public async Task<byte[]> GetPropertyValueAsync(HubProperty property)
-        {
-            var response = await GetPropertyUpdate(property).ConfigureAwait(false);
-
-            return response == null ? new byte[0] : response.MessagePayload.ToArray();
+            }
         }
 
         public void Dispose()
@@ -92,41 +83,6 @@ namespace LegoBoost.Xamarin.Model
         }
     }
 
-    public class HubProperty : IProperty, IPossibleOperations
-    {
-        public HubProperty(HubPropertyConfig config)
-        {
-            PropertyName = config.PropertyName;
-            PropertyDescription = config.PropertyDescription;
-            PropertyReference = config.PropertyReference;
-            CanSet = config.CanSet;
-            CanEnableUpdate = config.CanEnableUpdate;
-            CanDisableUpdate = config.CanDisableUpdate;
-            CanReset = config.CanReset;
-            CanRequestUpdate = config.CanRequestUpdate;
-            CanUpdate = config.CanUpdate;
-        }
-
-        public string PropertyName { get; }
-
-        public string PropertyDescription { get; }
-
-        public byte PropertyReference { get; }
-
-        public bool CanSet { get; set; }
-
-        public bool CanEnableUpdate { get; set; }
-
-        public bool CanDisableUpdate { get; set; }
-
-        public bool CanReset { get; set; }
-
-        public bool CanRequestUpdate { get; set; }
-
-        public bool CanUpdate { get; set; }
-
-    }
-
     public static class HubPropertyExtensions
     {
         public static byte[] SetMessage(this HubProperty property, byte[] data = null)
@@ -136,7 +92,7 @@ namespace LegoBoost.Xamarin.Model
                 throw new NotSupportedException($"Operation 'Set' is not supported for property '{(property == null ? "unknown property" : nameof(property))}");
             }
 
-            List<byte> byteList = new List<byte> { property.PropertyReference, 0x01 };
+            List<byte> byteList = new List<byte> { property.ReferenceByte, 0x01 };
 
             if (data != null && data.Length > 0)
             {
@@ -145,50 +101,5 @@ namespace LegoBoost.Xamarin.Model
 
             return byteList.ToArray();
         }
-    }
-
-    public sealed class HubPropertyConfig : IProperty, IPossibleOperations
-    {
-        public HubPropertyConfig(string name, string description, byte referenceByte)
-        {
-            PropertyName = name;
-            PropertyDescription = description;
-            PropertyReference = referenceByte;
-        }
-
-        public string PropertyName { get; }
-        public string PropertyDescription { get; }
-        public byte PropertyReference { get; }
-
-        public bool CanSet { get; set; } = false;
-        public bool CanEnableUpdate { get; set; } = false;
-        public bool CanDisableUpdate { get; set; } = false;
-        public bool CanReset { get; set; } = false;
-        public bool CanRequestUpdate { get; set; } = true;
-        public bool CanUpdate { get; set; } = true;
-    }
-
-    public interface IProperty
-    {
-        string PropertyName { get; }
-
-        string PropertyDescription { get; }
-
-        byte PropertyReference { get; }
-    }
-
-    public interface IPossibleOperations
-    {
-        bool CanSet { get; set; }
-
-        bool CanEnableUpdate { get; set; }
-
-        bool CanDisableUpdate { get; set; }
-
-        bool CanReset { get; set; }
-
-        bool CanRequestUpdate { get; set; }
-
-        bool CanUpdate { get; set; }
     }
 }

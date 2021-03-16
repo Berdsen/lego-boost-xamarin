@@ -12,6 +12,8 @@ namespace LegoBoost.Core.Utilities
             {
                 case 0x01:
                     return new HubPropertyResponseMessage(characteristicValue);
+                case 0x02:
+                    return new HubActionResponseMessage(characteristicValue);
             }
 
             return null;

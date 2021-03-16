@@ -86,10 +86,10 @@ namespace LegoBoostDemo.Droid.Services
 
         public async Task<string> RequestDeviceNameAsync()
         {
-            var bytes = await hub.GetPropertyValueAsync(hub.Properties[HubProperties.PropertyNames.AdvertisingName]).ConfigureAwait(false);
+            var bytes = await hub.Properties[HubProperties.PropertyNames.AdvertisingName].GetPropertyValueAsync().ConfigureAwait(false);
             string returnValue = bytes == null || bytes.Length == 0 ? "" : Encoding.UTF8.GetString(bytes);
 
-            bytes = await hub.GetPropertyValueAsync(hub.Properties[HubProperties.PropertyNames.BatteryVoltage]).ConfigureAwait(false);
+            bytes = await hub.Properties[HubProperties.PropertyNames.BatteryVoltage].GetPropertyValueAsync().ConfigureAwait(false);
             returnValue += bytes == null || bytes.Length == 0 ? " unknown" : ( " " + ((int)bytes[0]).ToString() + "%");
 
             return returnValue;
@@ -97,17 +97,18 @@ namespace LegoBoostDemo.Droid.Services
 
         private async Task DisconnectActiveDeviceAsync()
         {
+            if (hub != null)
+            {
+                await hub.DisconnectAsync().ConfigureAwait(false);
+                hub.Dispose();
+                hub = null;
+            }
+
             if (connectedDevice != null)
             {
                 await connectedDeviceCharacteristic.StopUpdatesAsync().ConfigureAwait(false);
                 await adapter.DisconnectDeviceAsync(connectedDevice).ConfigureAwait(false);
                 connectedDeviceCharacteristic = null;
-            }
-
-            if (hub != null)
-            {
-                hub.Dispose();
-                hub = null;
             }
 
             connectedDevice = null;
