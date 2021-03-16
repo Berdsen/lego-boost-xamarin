@@ -1,19 +1,22 @@
-﻿using LegoBoost.Core.Model.Responses;
+﻿using LegoBoost.Core.Model.Constants;
+using LegoBoost.Core.Model.Responses;
 
 namespace LegoBoost.Core.Utilities
 {
     public class ResponseParser
     {
-        public static ResponseMessage ParseMessage(byte[] characteristicValue)
+        public static IResponseMessage ParseMessage(byte[] characteristicValue)
         {
             if (characteristicValue == null || characteristicValue.Length < 3) return null;
 
             switch (characteristicValue[2])
             {
-                case 0x01:
+                case HubProperties.Command:
                     return new HubPropertyResponseMessage(characteristicValue);
-                case 0x02:
+                case HubActions.Command:
                     return new HubActionResponseMessage(characteristicValue);
+                case ErrorCodes.Command:
+                    return new GenericErrorResponseMessage(characteristicValue);
             }
 
             return null;

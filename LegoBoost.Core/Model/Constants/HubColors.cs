@@ -1,6 +1,6 @@
 ﻿namespace LegoBoost.Core.Model.Constants
 {
-    public enum BoostColors : byte
+    public enum HubColors : byte
     {
         Off = 0x00,
         Pink = 0x01,

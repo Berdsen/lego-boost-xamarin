@@ -51,12 +51,14 @@ namespace LegoBoostDemo.Droid.Services
                 else
                 {
                     await DisconnectActiveDeviceAsync().ConfigureAwait(false);
+                    await adapter.StopScanningForDevicesAsync().ConfigureAwait(false);
                 }
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e.Message);
                 await DisconnectActiveDeviceAsync().ConfigureAwait(false);
+                await adapter.StopScanningForDevicesAsync().ConfigureAwait(false);
             }
         }
 
@@ -84,7 +86,7 @@ namespace LegoBoostDemo.Droid.Services
             return InitializationSequenceAsync();
         }
 
-        public Task SetColorAsync(BoostColors color)
+        public Task SetColorAsync(HubColors color)
         {
             return WriteColorAsync(color);
         }
@@ -104,9 +106,10 @@ namespace LegoBoostDemo.Droid.Services
         {
             if (connectedDevice != null)
             {
+                bool isDisconnected = false;
                 if (hub != null)
                 {
-                    var result =
+                    isDisconnected =
                         shutDown ?
                             await hub.ShutDownAsync().ConfigureAwait(false) :
                             await hub.DisconnectAsync().ConfigureAwait(false);
@@ -115,8 +118,11 @@ namespace LegoBoostDemo.Droid.Services
                     hub = null;
                 }
 
-                await connectedDeviceCharacteristic.StopUpdatesAsync().ConfigureAwait(false);
-                await adapter.DisconnectDeviceAsync(connectedDevice).ConfigureAwait(false);
+                if (!isDisconnected)
+                {
+                    await connectedDeviceCharacteristic.StopUpdatesAsync().ConfigureAwait(false);
+                    await adapter.DisconnectDeviceAsync(connectedDevice).ConfigureAwait(false);
+                }
                 connectedDeviceCharacteristic = null;
             }
 
@@ -143,6 +149,9 @@ namespace LegoBoostDemo.Droid.Services
 
                 hub = new Hub(connectedDeviceCharacteristic);
 
+                // executing the following command will result in an CommandNotRecognized error. Don't know why, but can be used here to simulate real error :D
+                // await hub.Properties[HubProperties.PropertyNames.HardwareNetworkFamily].GetPropertyValueAsync().ConfigureAwait(false);
+
                 return true;
             }
             catch (Exception e)
@@ -157,31 +166,31 @@ namespace LegoBoostDemo.Droid.Services
         {
             if (connectedDeviceCharacteristic == null) return;
 
-            await WriteColorAsync(BoostColors.Pink).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Pink).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(BoostColors.Purple).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Purple).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(BoostColors.Blue).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Blue).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(BoostColors.Lightblue).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Lightblue).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(BoostColors.Cyan).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Cyan).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(BoostColors.Green).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Green).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(BoostColors.Yellow).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Yellow).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(BoostColors.Orange).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Orange).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(BoostColors.Red).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Red).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(BoostColors.White).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.White).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
 
-            await WriteColorAsync(BoostColors.Yellow).ConfigureAwait(false);
+            await WriteColorAsync(HubColors.Yellow).ConfigureAwait(false);
         }
 
-        private Task<bool> WriteColorAsync(BoostColors color)
+        private Task<bool> WriteColorAsync(HubColors color)
         {
             // var bytes = new byte[] {0x08, 0x00, 0x81, 0x32, 0x11, 0x51, 0x00, (byte)color};
             var bytes = CreateCommandBytes(0x81, new byte[] {0x32, 0x11, 0x51, 0x00, (byte) color});

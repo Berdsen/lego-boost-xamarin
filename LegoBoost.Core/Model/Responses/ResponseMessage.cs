@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace LegoBoost.Core.Model.Responses
 {
-    public abstract class ResponseMessage
+    public abstract class ResponseMessage : IResponseMessage
     {
-        public int Length { get; }
+        public int MessageLength { get; }
 
         public byte HubId { get; } // always 0x00
 
@@ -15,7 +15,7 @@ namespace LegoBoost.Core.Model.Responses
 
         public ResponseMessage(byte[] data)
         {
-            Length = (int)data[0];
+            MessageLength = (int)data[0];
             HubId = data[1];
             MessageType = data[2];
 

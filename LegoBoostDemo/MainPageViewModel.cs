@@ -63,7 +63,7 @@ namespace LegoBoostDemo
 
         private async void SetColor(object color)
         {
-            if (!(color is BoostColors bc)) return;
+            if (!(color is HubColors bc)) return;
 
             userDialogs.ShowLoading("Set color");
             await legoService.SetColorAsync(bc).ConfigureAwait(false);

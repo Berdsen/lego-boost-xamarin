@@ -37,14 +37,14 @@
         <Button Grid.Row="0" Grid.Column="1" Text="Red"
                 Command="{Binding ColorCommand}" >
             <Button.CommandParameter>
-                <constants:BoostColors>Red</constants:BoostColors>
+                <constants:HubColors>Red</constants:HubColors>
             </Button.CommandParameter>
         </Button>
 
         <Button Grid.Row="0" Grid.Column="1" Text="Blue"
                 Command="{Binding ColorCommand}" >
             <Button.CommandParameter>
-                <constants:BoostColors>Blue</constants:BoostColors>
+                <constants:HubColors>Blue</constants:HubColors>
             </Button.CommandParameter>
         </Button>
 

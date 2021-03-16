@@ -48,24 +48,31 @@ namespace LegoBoost.Xamarin.Model
 
         public Task<HubPropertyResponseMessage> GetPropertyUpdateAsync()
         {
-            if (!CanRequestUpdate) return null;
+            if (!CanRequestUpdate) return Task.FromResult<HubPropertyResponseMessage>(null);
 
             return TaskBuilder.CreateTaskAsync<HubPropertyResponseMessage>(() =>
                 {
-                    var bytes = CommandCreator.CreateCommandBytes(HubProperties.Command, new byte[] { ReferenceByte, HubProperties.PropertyOperations.RequestUpdate });
+                    var bytes = DataCreator.CreateCommandBytes(HubProperties.Command, new byte[] { ReferenceByte, HubProperties.PropertyOperations.RequestUpdate });
                     hubCharacteristic.WriteAsync(bytes);
                 },
                 (complete, reject) => (sender, args) =>
                 {
-                    var message = ResponseParser.ParseMessage(args.Characteristic.Value) as HubPropertyResponseMessage;
+                    var response = ResponseParser.ParseMessage(args.Characteristic.Value);
 
-                    if (message == null || message.MessageType != 0x01 || message.Property != ReferenceByte || message.Method != HubProperties.PropertyOperations.Update)
+                    if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == HubProperties.Command)
                     {
-                        reject(new Exception("wrong response type"));
+                        reject(DataCreator.CreateExceptionFromMessage(errorResponse));
+                        return;
+                    }
+
+                    if (!(response is HubPropertyResponseMessage message) || message.MessageType != HubProperties.Command || message.Property != ReferenceByte || message.Method != HubProperties.PropertyOperations.Update)
+                    {
+                        // not my message :P
                         return;
                     }
 
                     complete(message);
+
                 },
                 hubCharacteristic);
         }

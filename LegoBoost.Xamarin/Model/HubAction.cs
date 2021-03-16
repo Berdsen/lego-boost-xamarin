@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using LegoBoost.Core.Model.Constants;
 using LegoBoost.Core.Model.Responses;
 using LegoBoost.Core.Utilities;
@@ -26,18 +25,24 @@ namespace LegoBoost.Xamarin.Model
         {
             if (ExpectsResponse)
             {
+                var commandBytes = DataCreator.CreateCommandBytes(HubActions.Command, new byte[] { ReferenceByte });
                 var result = await TaskBuilder.CreateTaskAsync<HubActionResponseMessage>(() =>
                     {
-                        var bytes = CommandCreator.CreateCommandBytes(HubActions.Command, new byte[] { ReferenceByte });
-                        hubCharacteristic.WriteAsync(bytes);
+                        hubCharacteristic.WriteAsync(commandBytes);
                     },
                     (complete, reject) => (sender, args) =>
                     {
-                        var message = ResponseParser.ParseMessage(args.Characteristic.Value) as HubActionResponseMessage;
+                        var response = ResponseParser.ParseMessage(args.Characteristic.Value);
 
-                        if (message == null || message.MessageType != HubActions.Command || message.Action != referenceResponseByte)
+                        if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == HubActions.Command)
                         {
-                            reject(new Exception("wrong response type"));
+                            reject(DataCreator.CreateExceptionFromMessage(errorResponse));
+                            return;
+                        }
+
+                        if (!(response is HubActionResponseMessage message) || message.MessageType != HubActions.Command || message.Action != referenceResponseByte)
+                        {
+                            // not my message :P
                             return;
                         }
 
@@ -49,7 +54,7 @@ namespace LegoBoost.Xamarin.Model
             }
             else
             {
-                var bytes = CommandCreator.CreateCommandBytes(HubActions.Command, new byte[] { ReferenceByte });
+                var bytes = DataCreator.CreateCommandBytes(HubActions.Command, new byte[] { ReferenceByte });
                 var result = await hubCharacteristic.WriteAsync(bytes).ConfigureAwait(false);
                 return new HubActionResponseMessage(bytes);
 

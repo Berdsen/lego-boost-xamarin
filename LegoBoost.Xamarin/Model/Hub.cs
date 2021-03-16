@@ -59,8 +59,7 @@ namespace LegoBoost.Xamarin.Model
 
         private void ValueUpdated(object sender, CharacteristicUpdatedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"Name: {e.Characteristic.Name}");
-            System.Diagnostics.Debug.WriteLine($"Value: {e.Characteristic.Value}");
+            System.Diagnostics.Debug.WriteLine($"ResponseBytes: {BitConverter.ToString(e.Characteristic.Value)}");
         }
 
         public async Task<bool> DisconnectAsync()
