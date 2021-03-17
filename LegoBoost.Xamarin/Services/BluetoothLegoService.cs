@@ -10,7 +10,7 @@ using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using ScanMode = Plugin.BLE.Abstractions.Contracts.ScanMode;
 
-namespace LegoBoostDemo.Droid.Services
+namespace LegoBoost.Xamarin.Services
 {
     public class BluetoothLegoService : ILegoService
     {
@@ -31,7 +31,7 @@ namespace LegoBoostDemo.Droid.Services
             this.bluetoothPlugin = bluetoothPlugin;
             this.adapter = bluetoothPlugin.Adapter;
 
-            adapter.ScanMode = ScanMode.LowPower;
+            adapter.ScanMode = ScanMode.Balanced;
             adapter.ScanTimeout = 30000;
 
             adapter.DeviceDiscovered += async (s, a) =>
@@ -93,13 +93,31 @@ namespace LegoBoostDemo.Droid.Services
 
         public async Task<string> RequestDeviceNameAsync()
         {
-            var bytes = await hub.Properties[HubProperties.PropertyNames.AdvertisingName].GetPropertyValueAsync().ConfigureAwait(false);
+            var bytes = await hub.Properties[HubProperties.PropertyNames.AdvertisingName].RetrieveUpdateValueAsync().ConfigureAwait(false);
             string returnValue = bytes == null || bytes.Length == 0 ? "" : Encoding.UTF8.GetString(bytes);
 
-            bytes = await hub.Properties[HubProperties.PropertyNames.BatteryVoltage].GetPropertyValueAsync().ConfigureAwait(false);
+            bytes = await hub.Properties[HubProperties.PropertyNames.BatteryVoltage].RetrieveUpdateValueAsync().ConfigureAwait(false);
             returnValue += bytes == null || bytes.Length == 0 ? " unknown" : ( " " + ((int)bytes[0]).ToString() + "%");
 
             return returnValue;
+        }
+
+        public async Task<string> SetDeviceNameAsync(string newDeviceName)
+        {
+            // just demo here
+            var deviceName = await RequestDeviceNameAsync().ConfigureAwait(false);
+            var property = hub.Properties[HubProperties.PropertyNames.AdvertisingName];
+
+            if (deviceName.Contains("LEGO Move Hub"))
+            {
+                var result = await hub.SetPropertyAsync(property, Encoding.UTF8.GetBytes("Move Hub")).ConfigureAwait(false);
+            }
+            else
+            {
+                var result = await hub.SetPropertyAsync(property, Encoding.UTF8.GetBytes("LEGO Move Hub")).ConfigureAwait(false);
+            }
+
+            return await RequestDeviceNameAsync().ConfigureAwait(false);
         }
 
         private async Task DisconnectActiveDeviceAsync(bool shutDown = false)
@@ -115,28 +133,30 @@ namespace LegoBoostDemo.Droid.Services
                             await hub.DisconnectAsync().ConfigureAwait(false);
 
                     hub.Dispose();
-                    hub = null;
                 }
 
-                if (!isDisconnected)
+                if (!isDisconnected && connectedDeviceCharacteristic != null)
                 {
                     await connectedDeviceCharacteristic.StopUpdatesAsync().ConfigureAwait(false);
                     await adapter.DisconnectDeviceAsync(connectedDevice).ConfigureAwait(false);
                 }
-                connectedDeviceCharacteristic = null;
             }
 
             connectedDevice = null;
             connectedDeviceService = null;
+            connectedDeviceCharacteristic = null;
+            hub = null;
         }
 
         private async Task<bool> TryConnectAsync(IDevice device)
         {
             try
             {
-                connectedDevice = device;
-
                 await adapter.ConnectToDeviceAsync(device, new ConnectParameters(true, true)).ConfigureAwait(false);
+
+                if (!adapter.ConnectedDevices.Contains(device)) return false;
+
+                connectedDevice = device;
                 connectedDeviceService = await device.GetServiceAsync(serviceId).ConfigureAwait(false);
                 if (connectedDeviceService == null) return false;
 

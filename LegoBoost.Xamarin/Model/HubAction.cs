@@ -48,7 +48,7 @@ namespace LegoBoost.Xamarin.Model
 
                         complete(message);
                     },
-                    hubCharacteristic).ConfigureAwait(false);
+                    hubCharacteristic, 5).ConfigureAwait(false);
 
                 return result;
             }

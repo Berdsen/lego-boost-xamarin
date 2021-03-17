@@ -46,7 +46,7 @@ namespace LegoBoost.Xamarin.Model
 
         public bool CanUpdate { get; set; }
 
-        public Task<HubPropertyResponseMessage> GetPropertyUpdateAsync()
+        public Task<HubPropertyResponseMessage> RequestUpdateAsync()
         {
             if (!CanRequestUpdate) return Task.FromResult<HubPropertyResponseMessage>(null);
 
@@ -77,9 +77,9 @@ namespace LegoBoost.Xamarin.Model
                 hubCharacteristic);
         }
 
-        public async Task<byte[]> GetPropertyValueAsync()
+        public async Task<byte[]> RetrieveUpdateValueAsync()
         {
-            var response = await GetPropertyUpdateAsync().ConfigureAwait(false);
+            var response = await RequestUpdateAsync().ConfigureAwait(false);
 
             return response == null ? new byte[0] : response.MessagePayload.ToArray();
         }

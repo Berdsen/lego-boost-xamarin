@@ -18,5 +18,7 @@ namespace LegoBoost.Core.Services
         Task SetColorAsync(HubColors color);
 
         Task<string> RequestDeviceNameAsync();
+
+        Task<string> SetDeviceNameAsync(string newDeviceName);
     }
 }

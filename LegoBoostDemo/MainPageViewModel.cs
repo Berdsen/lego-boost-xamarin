@@ -23,7 +23,8 @@ namespace LegoBoostDemo
         public DelegateCommand<object> ColorCommand { get; }
         public DelegateCommand ScanCommand { get; }
         public DelegateCommand BlinkCommand { get; }
-        public DelegateCommand TestCommand { get; }
+        public DelegateCommand RequestDeviceNameCommand { get; }
+        public DelegateCommand SwitchDeviceNameCommand { get; }
 
         public bool IsConnected
         {
@@ -45,18 +46,28 @@ namespace LegoBoostDemo
             DisconnectCommand = new DelegateCommand<object>(Disconnect);
             ColorCommand = new DelegateCommand<object>(SetColor);
             BlinkCommand = new DelegateCommand(Blink);
-            TestCommand = new DelegateCommand(Test);
+            RequestDeviceNameCommand = new DelegateCommand(RequestDeviceName);
+            SwitchDeviceNameCommand = new DelegateCommand(SwitchDeviceName);
 
             DisconnectCommand.ObservesCanExecute(() => IsConnected);
             ColorCommand.ObservesCanExecute(() => IsConnected);
             BlinkCommand.ObservesCanExecute(() => IsConnected);
-            TestCommand.ObservesCanExecute(() => IsConnected);
+            RequestDeviceNameCommand.ObservesCanExecute(() => IsConnected);
+            SwitchDeviceNameCommand.ObservesCanExecute(() => IsConnected);
         }
 
-        private async void Test()
+        private async void RequestDeviceName()
         {
-            userDialogs.ShowLoading("Set color");
+            userDialogs.ShowLoading("Requesting device name");
             var deviceName= await legoService.RequestDeviceNameAsync().ConfigureAwait(false);
+            userDialogs.Toast(deviceName, TimeSpan.FromSeconds(3));
+            userDialogs.HideLoading();
+        }
+
+        private async void SwitchDeviceName()
+        {
+            userDialogs.ShowLoading("Switching device name");
+            var deviceName = await legoService.SetDeviceNameAsync("").ConfigureAwait(false);
             userDialogs.Toast(deviceName, TimeSpan.FromSeconds(3));
             userDialogs.HideLoading();
         }

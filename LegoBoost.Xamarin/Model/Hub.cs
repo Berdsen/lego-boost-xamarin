@@ -4,6 +4,8 @@ using Plugin.BLE.Abstractions.EventArgs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LegoBoost.Core.Model.Responses;
+using LegoBoost.Core.Utilities;
 
 namespace LegoBoost.Xamarin.Model
 {
@@ -62,18 +64,42 @@ namespace LegoBoost.Xamarin.Model
             System.Diagnostics.Debug.WriteLine($"ResponseBytes: {BitConverter.ToString(e.Characteristic.Value)}");
         }
 
+        public async Task<bool> SetPropertyAsync(HubProperty property, byte[] data)
+        {
+            if (property == null || !property.CanSet) return false;
+
+            List<byte> payLoad = new List<byte>() { property.ReferenceByte, HubProperties.PropertyOperations.Set} ;
+            payLoad.AddRange(data);
+
+            var bytes = DataCreator.CreateCommandBytes(HubProperties.Command, payLoad.ToArray());
+            return await hubCharacteristic.WriteAsync(bytes).ConfigureAwait(false);
+        }
+
         public async Task<bool> DisconnectAsync()
         {
-            var result = await Actions[HubActions.ActionNames.Disconnect].ExecuteAsync().ConfigureAwait(false);
+            var result = await ExecuteActionAsync(Actions[HubActions.ActionNames.Disconnect]).ConfigureAwait(false);
 
-            return result != null;
+            return true;
         }
 
         public async Task<bool> ShutDownAsync()
         {
-            var result = await Actions[HubActions.ActionNames.SwitchHubOff].ExecuteAsync().ConfigureAwait(false);
+            var result = await ExecuteActionAsync(Actions[HubActions.ActionNames.SwitchHubOff]).ConfigureAwait(false);
 
-            return result != null;
+            return true;
+        }
+
+        private async Task<HubActionResponseMessage> ExecuteActionAsync(HubAction action)
+        {
+            try
+            {
+                return await action.ExecuteAsync().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message);
+                return null;
+            }
         }
 
         public void Dispose()

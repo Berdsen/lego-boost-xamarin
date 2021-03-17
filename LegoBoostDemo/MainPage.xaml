@@ -48,8 +48,11 @@
             </Button.CommandParameter>
         </Button>
 
-        <Button Grid.Row="0" Grid.Column="1" Text="Testbutton"
-                Command="{Binding TestCommand}" />
+        <Button Grid.Row="0" Grid.Column="1" Text="Request device name"
+                Command="{Binding RequestDeviceNameCommand}" />
+
+        <Button Grid.Row="0" Grid.Column="1" Text="Switch device name"
+                Command="{Binding SwitchDeviceNameCommand}" />
 
     </StackLayout>
 
