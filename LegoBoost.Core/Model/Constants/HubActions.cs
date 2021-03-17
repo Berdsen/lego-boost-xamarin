@@ -1,10 +1,10 @@
 ﻿namespace LegoBoost.Core.Model.Constants
 {
-    public class HubActions
+    public static class HubActions
     {
         public const byte Command = 0x02;
 
-        public class ActionBytes
+        public static class ActionBytes
         {
             // DOWNSTREAM 0x00 - 0x2F
             public const byte SwitchHubOff = 0x01;
@@ -21,7 +21,7 @@
             public const byte HubWillGoIntoBootMode = 0x32;
         }
 
-        public class ActionNames
+        public static class ActionNames
         {
             public const string SwitchHubOff = "SwitchHubOff";
             public const string Disconnect = "Disconnect";

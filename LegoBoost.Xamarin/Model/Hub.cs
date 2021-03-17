@@ -17,6 +17,8 @@ namespace LegoBoost.Xamarin.Model
 
         public Dictionary<string, HubAction> Actions { get; }
 
+        public Dictionary<HubAttachedIO.IOTypes, List<byte>> IODevices { get; }
+
         public Hub(ICharacteristic hubCharacteristic)
         {
             this.hubCharacteristic = hubCharacteristic;
@@ -24,6 +26,7 @@ namespace LegoBoost.Xamarin.Model
 
             Properties = new Dictionary<string, HubProperty>();
             Actions = new Dictionary<string, HubAction>();
+            IODevices = new Dictionary<HubAttachedIO.IOTypes, List<byte>>();
 
             InitializeProperties();
             InitializeActions();
@@ -62,6 +65,41 @@ namespace LegoBoost.Xamarin.Model
         private void ValueUpdated(object sender, CharacteristicUpdatedEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine($"ResponseBytes: {BitConverter.ToString(e.Characteristic.Value)}");
+
+            var responseMessage = ResponseParser.ParseMessage(e.Characteristic.Value);
+            if (responseMessage is HubAttachedIOResponseMessage attachedIOMessage)
+            {
+                switch (attachedIOMessage.Event)
+                {
+                    case HubAttachedIO.EventBytes.DetachedIO:
+                        RemoveIODevice(attachedIOMessage);
+                        break;
+                    case HubAttachedIO.EventBytes.AttachedIO:
+                    case HubAttachedIO.EventBytes.AttachedVirtualIO:
+                        AddIODevice(attachedIOMessage);
+                        break;
+                }
+            }
+        }
+
+        private void AddIODevice(HubAttachedIOResponseMessage message)
+        {
+            if (message.Event == HubAttachedIO.EventBytes.AttachedVirtualIO)
+            {
+
+            }
+
+            if (!IODevices.ContainsKey((HubAttachedIO.IOTypes)message.IOTypeId))
+            {
+                IODevices.Add((HubAttachedIO.IOTypes)message.IOTypeId, new List<byte>());
+            }
+
+            IODevices[(HubAttachedIO.IOTypes)message.IOTypeId].Add(message.PortId);
+        }
+
+        private void RemoveIODevice(HubAttachedIOResponseMessage attachedIOMessage)
+        {
+            
         }
 
         public async Task<bool> SetPropertyAsync(HubProperty property, byte[] data)
@@ -109,26 +147,11 @@ namespace LegoBoost.Xamarin.Model
                 hubCharacteristic.ValueUpdated -= ValueUpdated;
                 hubCharacteristic = null;
             }
+
+            Properties?.Clear();
+            Actions?.Clear();
+            IODevices?.Clear();
         }
     }
 
-    public static class HubPropertyExtensions
-    {
-        public static byte[] SetMessage(this HubProperty property, byte[] data = null)
-        {
-            if (property == null || !property.CanSet)
-            {
-                throw new NotSupportedException($"Operation 'Set' is not supported for property '{(property == null ? "unknown property" : nameof(property))}");
-            }
-
-            List<byte> byteList = new List<byte> { property.ReferenceByte, 0x01 };
-
-            if (data != null && data.Length > 0)
-            {
-                byteList.AddRange(data);
-            }
-
-            return byteList.ToArray();
-        }
-    }
 }

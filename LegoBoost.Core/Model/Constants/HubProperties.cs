@@ -1,10 +1,10 @@
 ﻿namespace LegoBoost.Core.Model.Constants
 {
-    public class HubProperties
+    public static class HubProperties
     {
         public const byte Command = 0x01;
 
-        public class PropertyBytes
+        public static class PropertyBytes
         {
             public const byte AdvertisingName = 0x01;
             public const byte Button = 0x02;
@@ -23,7 +23,7 @@
             public const byte HardwareNetworkFamily = 0x0F;
         }
 
-        public class PropertyNames
+        public static class PropertyNames
         {
             public const string AdvertisingName = "AdvertisingName";
             public const string Button = "Button";
@@ -42,7 +42,7 @@
             public const string HardwareNetworkFamily = "HardwareNetworkFamily";
         }
 
-        public class PropertyOperations
+        public static class PropertyOperations
         {
             public const byte Set = 0x01;
             public const byte EnableUpdates = 0x02;

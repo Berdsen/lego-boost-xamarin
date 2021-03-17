@@ -1,10 +1,10 @@
 ﻿namespace LegoBoost.Core.Model.Constants
 {
-    public class ErrorCodes
+    public static class ErrorCodes
     {
         public const byte Command = 0x05;
 
-        public class ErrorCodeBytes
+        public static class ErrorCodeBytes
         {
             public const byte Ack = 0x01;
             public const byte Mack = 0x02;

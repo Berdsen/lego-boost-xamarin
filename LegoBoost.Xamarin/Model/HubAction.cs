@@ -57,7 +57,6 @@ namespace LegoBoost.Xamarin.Model
                 var bytes = DataCreator.CreateCommandBytes(HubActions.Command, new byte[] { ReferenceByte });
                 var result = await hubCharacteristic.WriteAsync(bytes).ConfigureAwait(false);
                 return new HubActionResponseMessage(bytes);
-
             }
         }
 

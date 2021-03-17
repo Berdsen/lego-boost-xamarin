@@ -15,6 +15,8 @@ namespace LegoBoost.Core.Utilities
                     return new HubPropertyResponseMessage(characteristicValue);
                 case HubActions.Command:
                     return new HubActionResponseMessage(characteristicValue);
+                case HubAttachedIO.Command:
+                    return new HubAttachedIOResponseMessage(characteristicValue);
                 case ErrorCodes.Command:
                     return new GenericErrorResponseMessage(characteristicValue);
             }
