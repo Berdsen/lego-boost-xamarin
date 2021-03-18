@@ -52,7 +52,7 @@ namespace LegoBoost.Xamarin.Model
 
             return TaskBuilder.CreateTaskAsync<HubPropertyResponseMessage>(() =>
                 {
-                    var bytes = DataCreator.CreateCommandBytes(Core.Model.CommunicationProtocol.Hub.Property.Command, new byte[] { ReferenceByte, (byte)CPHub.Property.Operation.RequestUpdate });
+                    var bytes = DataCreator.CreateCommandBytes(CPHub.Property.Command, new byte[] { ReferenceByte, (byte)CPHub.Property.Operation.RequestUpdate });
                     hubCharacteristic.WriteAsync(bytes);
                 },
                 (complete, reject) => (sender, args) =>
