@@ -25,7 +25,7 @@ namespace LegoBoost.Core.Model.Responses
             if (MessageLength < 5) throw new Exception("Wrong Response Message type");
 
             PortId = MessagePayload[0];
-            Event = (Hub.AttachedIO.Event) Enum.Parse(typeof(Hub.AttachedIO.Event), MessagePayload[1].ToString());
+            Event = (Hub.AttachedIO.Event)MessagePayload[1];
 
             switch (Event)
             {
