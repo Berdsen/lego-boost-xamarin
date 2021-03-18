@@ -3,10 +3,12 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                         xmlns:unity="http://prismlibrary.com"
                         xmlns:system="clr-namespace:System;assembly=netstandard"
+                        xmlns:legoBoostDemo="clr-namespace:LegoBoostDemo;assembly=LegoBoostDemo"
                         x:Class="LegoBoostDemo.App">
     <Application.Resources>
         <system:Boolean x:Key="FalseValue">False</system:Boolean>
         <system:Boolean x:Key="TrueValue">True</system:Boolean>
+        <legoBoostDemo:HubColorConverter x:Key="HubColorConverter" />
     </Application.Resources>
     
 </unity:PrismApplication>

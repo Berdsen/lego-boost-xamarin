@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using LegoBoost.Core.Model.Constants;
+using LegoBoost.Core.Model.CommunicationProtocol;
 using LegoBoost.Core.Model.Responses;
 
 namespace LegoBoost.Core.Utilities
@@ -20,20 +20,20 @@ namespace LegoBoost.Core.Utilities
         {
             switch (errorMessage.ErrorCode)
             {
-                case ErrorCodes.ErrorCodeBytes.Ack:
-                case ErrorCodes.ErrorCodeBytes.Mack:
+                case Hub.Error.Code.Ack:
+                case Hub.Error.Code.Mack:
                     return new Exception("ACK / MACK error");
-                case ErrorCodes.ErrorCodeBytes.BufferOverflow:
+                case Hub.Error.Code.BufferOverflow:
                     return new Exception("BufferOverflow error");
-                case ErrorCodes.ErrorCodeBytes.Timeout:
+                case Hub.Error.Code.Timeout:
                     return new Exception("Timeout error");
-                case ErrorCodes.ErrorCodeBytes.CommandNotRecognized:
+                case Hub.Error.Code.CommandNotRecognized:
                     return new Exception("CommandNotRecognized error");
-                case ErrorCodes.ErrorCodeBytes.InvalidUse:
+                case Hub.Error.Code.InvalidUse:
                     return new Exception("InvalidUse error");
-                case ErrorCodes.ErrorCodeBytes.Overcurrent:
+                case Hub.Error.Code.Overcurrent:
                     return new Exception("Overcurrent error");
-                case ErrorCodes.ErrorCodeBytes.InternalError:
+                case Hub.Error.Code.InternalError:
                     return new Exception("InternalError error");
                 default:
                     return new Exception("unknown error");

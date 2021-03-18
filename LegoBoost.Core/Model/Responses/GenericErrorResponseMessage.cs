@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using LegoBoost.Core.Model.CommunicationProtocol;
 
 namespace LegoBoost.Core.Model.Responses
 {
@@ -6,13 +7,13 @@ namespace LegoBoost.Core.Model.Responses
     {
         public byte[] IssuedCommand { get; }
 
-        public byte ErrorCode { get; }
+        public Hub.Error.Code ErrorCode { get; }
 
         public GenericErrorResponseMessage(byte[] data) : base(data)
         {
             if (MessagePayload.Count == 0) return;
 
-            ErrorCode = MessagePayload.Last();
+            ErrorCode = (Hub.Error.Code) MessagePayload.Last();
             IssuedCommand = MessagePayload.GetRange(0, MessagePayload.Count - 1).ToArray();
         }
     }

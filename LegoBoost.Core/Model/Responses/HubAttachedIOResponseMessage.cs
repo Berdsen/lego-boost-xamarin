@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LegoBoost.Core.Model.Constants;
+using LegoBoost.Core.Model.CommunicationProtocol;
 
 namespace LegoBoost.Core.Model.Responses
 {
@@ -9,10 +7,10 @@ namespace LegoBoost.Core.Model.Responses
     {
         public byte PortId { get; }
 
-        public byte Event { get; }
+        public Hub.AttachedIO.Event Event { get; }
         
         // should we use short or ushort?
-        public ushort IOTypeId { get; private set; }
+        public Hub.AttachedIO.Type IOTypeId { get; private set; }
 
         public uint HardwareRevision { get; private set; }
 
@@ -27,15 +25,15 @@ namespace LegoBoost.Core.Model.Responses
             if (MessageLength < 5) throw new Exception("Wrong Response Message type");
 
             PortId = MessagePayload[0];
-            Event = MessagePayload[1];
+            Event = (Hub.AttachedIO.Event) Enum.Parse(typeof(Hub.AttachedIO.Event), MessagePayload[1].ToString());
 
             switch (Event)
             {
-                case HubAttachedIO.EventBytes.AttachedIO:
+                case Hub.AttachedIO.Event.AttachedIO:
                     if (MessageLength < 15) throw new Exception("Wrong Response Message type");
                     ReadAttachedIOEvent();
                     break;
-                case HubAttachedIO.EventBytes.AttachedVirtualIO:
+                case Hub.AttachedIO.Event.AttachedVirtualIO:
                     if (MessageLength < 9) throw new Exception("Wrong Response Message type");
                     ReadAttachedVirtualIOEvent();
                     break;
@@ -44,14 +42,14 @@ namespace LegoBoost.Core.Model.Responses
 
         private void ReadAttachedIOEvent()
         {
-            this.IOTypeId = BitConverter.ToUInt16(MessagePayload.ToArray(), 2);
+            this.IOTypeId = (Hub.AttachedIO.Type) BitConverter.ToUInt16(MessagePayload.ToArray(), 2);
             this.HardwareRevision = BitConverter.ToUInt32(MessagePayload.ToArray(), 4);
             this.SoftwareRevision = BitConverter.ToUInt32(MessagePayload.ToArray(), 8);
         }
 
         private void ReadAttachedVirtualIOEvent()
         {
-            this.IOTypeId = BitConverter.ToUInt16(MessagePayload.ToArray(), 2);
+            this.IOTypeId = (Hub.AttachedIO.Type) BitConverter.ToUInt16(MessagePayload.ToArray(), 2);
             this.PortIdA = MessagePayload[4];
             this.PortIdB = MessagePayload[5];
         }

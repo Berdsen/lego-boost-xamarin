@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
-using LegoBoost.Core.Model.Constants;
 using LegoBoost.Core.Model.Responses;
 using LegoBoost.Core.Utilities;
 using LegoBoost.Xamarin.Model.Base;
 using LegoBoost.Xamarin.Utilities;
 using Plugin.BLE.Abstractions.Contracts;
+
+using  CPHub = LegoBoost.Core.Model.CommunicationProtocol.Hub;
 
 namespace LegoBoost.Xamarin.Model
 {
@@ -25,7 +26,7 @@ namespace LegoBoost.Xamarin.Model
         {
             if (ExpectsResponse)
             {
-                var commandBytes = DataCreator.CreateCommandBytes(HubActions.Command, new byte[] { ReferenceByte });
+                var commandBytes = DataCreator.CreateCommandBytes(CPHub.Action.Command, new byte[] { ReferenceByte });
                 var result = await TaskBuilder.CreateTaskAsync<HubActionResponseMessage>(() =>
                     {
                         hubCharacteristic.WriteAsync(commandBytes);
@@ -34,13 +35,13 @@ namespace LegoBoost.Xamarin.Model
                     {
                         var response = ResponseParser.ParseMessage(args.Characteristic.Value);
 
-                        if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == HubActions.Command)
+                        if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == CPHub.Action.Command)
                         {
                             reject(DataCreator.CreateExceptionFromMessage(errorResponse));
                             return;
                         }
 
-                        if (!(response is HubActionResponseMessage message) || message.MessageType != HubActions.Command || message.Action != referenceResponseByte)
+                        if (!(response is HubActionResponseMessage message) || message.MessageType != CPHub.Action.Command || (byte)message.Action != referenceResponseByte)
                         {
                             // not my message :P
                             return;
@@ -54,7 +55,7 @@ namespace LegoBoost.Xamarin.Model
             }
             else
             {
-                var bytes = DataCreator.CreateCommandBytes(HubActions.Command, new byte[] { ReferenceByte });
+                var bytes = DataCreator.CreateCommandBytes(CPHub.Action.Command, new byte[] { ReferenceByte });
                 var result = await hubCharacteristic.WriteAsync(bytes).ConfigureAwait(false);
                 return new HubActionResponseMessage(bytes);
             }

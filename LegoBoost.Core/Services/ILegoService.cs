@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using LegoBoost.Core.Model.Constants;
+using LegoBoost.Core.Model.CommunicationProtocol;
 
 namespace LegoBoost.Core.Services
 {
@@ -15,7 +15,7 @@ namespace LegoBoost.Core.Services
 
         Task BlinkAsync();
 
-        Task SetColorAsync(HubColors color);
+        Task SetColorAsync(Hub.Color color);
 
         Task<string> RequestDeviceNameAsync();
 

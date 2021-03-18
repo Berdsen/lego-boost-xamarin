@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using LegoBoost.Core.Model.CommunicationProtocol;
 
 namespace LegoBoost.Core.Model.Responses
 {
     public class HubPropertyResponseMessage : ResponseMessage
     {
-        public byte Property { get; }
+        public Hub.Property.Name Property { get; }
 
-        public byte Method { get; }
+        public Hub.Property.Operation Method { get; }
 
         public new List<byte> MessagePayload { get; }
 
         public HubPropertyResponseMessage(byte[] data) : base(data)
         {
-            Property = base.MessagePayload[0];
-            Method = base.MessagePayload[1];
+            Property = (Hub.Property.Name) base.MessagePayload[0];
+            Method = (Hub.Property.Operation) base.MessagePayload[1];
 
             //               create a copy
             MessagePayload = base.MessagePayload.ToArray().ToList();

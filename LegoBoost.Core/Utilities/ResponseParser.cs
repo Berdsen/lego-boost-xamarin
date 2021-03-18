@@ -1,4 +1,4 @@
-﻿using LegoBoost.Core.Model.Constants;
+﻿using LegoBoost.Core.Model.CommunicationProtocol;
 using LegoBoost.Core.Model.Responses;
 
 namespace LegoBoost.Core.Utilities
@@ -11,13 +11,13 @@ namespace LegoBoost.Core.Utilities
 
             switch (characteristicValue[2])
             {
-                case HubProperties.Command:
+                case Hub.Property.Command:
                     return new HubPropertyResponseMessage(characteristicValue);
-                case HubActions.Command:
+                case Hub.Action.Command:
                     return new HubActionResponseMessage(characteristicValue);
-                case HubAttachedIO.Command:
+                case Hub.AttachedIO.Command:
                     return new HubAttachedIOResponseMessage(characteristicValue);
-                case ErrorCodes.Command:
+                case Hub.Error.Command:
                     return new GenericErrorResponseMessage(characteristicValue);
             }
 

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LegoBoost.Core.Model.Constants;
+using LegoBoost.Core.Model.CommunicationProtocol;
 using LegoBoost.Core.Services;
-using LegoBoost.Xamarin.Model;
+using LegoBoost.Core.Utilities;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using ScanMode = Plugin.BLE.Abstractions.Contracts.ScanMode;
+using CPHub = LegoBoost.Core.Model.CommunicationProtocol.Hub;
+using Hub = LegoBoost.Xamarin.Model.Hub;
 
 namespace LegoBoost.Xamarin.Services
 {
@@ -86,17 +88,17 @@ namespace LegoBoost.Xamarin.Services
             return InitializationSequenceAsync();
         }
 
-        public Task SetColorAsync(HubColors color)
+        public Task SetColorAsync(CPHub.Color color)
         {
             return WriteColorAsync(color);
         }
 
         public async Task<string> RequestDeviceNameAsync()
         {
-            var bytes = await hub.Properties[HubProperties.PropertyNames.AdvertisingName].RetrieveUpdateValueAsync().ConfigureAwait(false);
+            var bytes = await hub.Properties[CPHub.Property.Name.AdvertisingName.GetStringValue()].RetrieveUpdateValueAsync().ConfigureAwait(false);
             string returnValue = bytes == null || bytes.Length == 0 ? "" : Encoding.UTF8.GetString(bytes);
 
-            bytes = await hub.Properties[HubProperties.PropertyNames.BatteryVoltage].RetrieveUpdateValueAsync().ConfigureAwait(false);
+            bytes = await hub.Properties[CPHub.Property.Name.BatteryVoltage.GetStringValue()].RetrieveUpdateValueAsync().ConfigureAwait(false);
             returnValue += bytes == null || bytes.Length == 0 ? " unknown" : ( " " + ((int)bytes[0]).ToString() + "%");
 
             return returnValue;
@@ -106,7 +108,7 @@ namespace LegoBoost.Xamarin.Services
         {
             // just demo here
             var deviceName = await RequestDeviceNameAsync().ConfigureAwait(false);
-            var property = hub.Properties[HubProperties.PropertyNames.AdvertisingName];
+            var property = hub.Properties[CPHub.Property.Name.AdvertisingName.GetStringValue()];
 
             if (deviceName.Contains("LEGO Move Hub"))
             {
@@ -186,31 +188,31 @@ namespace LegoBoost.Xamarin.Services
         {
             if (connectedDeviceCharacteristic == null) return;
 
-            await WriteColorAsync(HubColors.Pink).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.Pink).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(HubColors.Purple).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.Purple).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(HubColors.Blue).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.Blue).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(HubColors.Lightblue).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.Lightblue).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(HubColors.Cyan).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.Cyan).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(HubColors.Green).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.Green).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(HubColors.Yellow).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.Yellow).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(HubColors.Orange).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.Orange).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(HubColors.Red).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.Red).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-            await WriteColorAsync(HubColors.White).ConfigureAwait(false);
+            await WriteColorAsync(CPHub.Color.White).ConfigureAwait(false);
             await Task.Delay(150).ConfigureAwait(false);
-
-            await WriteColorAsync(HubColors.Yellow).ConfigureAwait(false);
+            
+            await WriteColorAsync(CPHub.Color.Yellow).ConfigureAwait(false);
         }
 
-        private Task<bool> WriteColorAsync(HubColors color)
+        private Task<bool> WriteColorAsync(CPHub.Color color)
         {
             // var bytes = new byte[] {0x08, 0x00, 0x81, 0x32, 0x11, 0x51, 0x00, (byte)color};
             var bytes = CreateCommandBytes(0x81, new byte[] {0x32, 0x11, 0x51, 0x00, (byte) color});
