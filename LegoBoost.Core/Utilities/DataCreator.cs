@@ -20,20 +20,20 @@ namespace LegoBoost.Core.Utilities
         {
             switch (errorMessage.ErrorCode)
             {
-                case (byte)Hub.Error.Code.Ack:
-                case (byte)Hub.Error.Code.Mack:
+                case Hub.Error.Code.Ack:
+                case Hub.Error.Code.Mack:
                     return new Exception("ACK / MACK error");
-                case (byte)Hub.Error.Code.BufferOverflow:
+                case Hub.Error.Code.BufferOverflow:
                     return new Exception("BufferOverflow error");
-                case (byte)Hub.Error.Code.Timeout:
+                case Hub.Error.Code.Timeout:
                     return new Exception("Timeout error");
-                case (byte)Hub.Error.Code.CommandNotRecognized:
+                case Hub.Error.Code.CommandNotRecognized:
                     return new Exception("CommandNotRecognized error");
-                case (byte)Hub.Error.Code.InvalidUse:
+                case Hub.Error.Code.InvalidUse:
                     return new Exception("InvalidUse error");
-                case (byte)Hub.Error.Code.Overcurrent:
+                case Hub.Error.Code.Overcurrent:
                     return new Exception("Overcurrent error");
-                case (byte)Hub.Error.Code.InternalError:
+                case Hub.Error.Code.InternalError:
                     return new Exception("InternalError error");
                 default:
                     return new Exception("unknown error");

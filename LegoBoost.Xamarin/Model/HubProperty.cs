@@ -65,7 +65,7 @@ namespace LegoBoost.Xamarin.Model
                         return;
                     }
 
-                    if (!(response is HubPropertyResponseMessage message) || message.MessageType != CPHub.Property.Command || message.Property != ReferenceByte || message.Method != (byte)CPHub.Property.Operation.Update)
+                    if (!(response is HubPropertyResponseMessage message) || message.MessageType != CPHub.Property.Command || (byte) message.Property != ReferenceByte || message.Method != CPHub.Property.Operation.Update)
                     {
                         // not my message :P
                         return;

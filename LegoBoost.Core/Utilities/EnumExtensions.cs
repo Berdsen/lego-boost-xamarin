@@ -16,19 +16,5 @@ namespace LegoBoost.Core.Utilities
             return attribs?.Length > 0 ? attribs[0].StringValue : "";
         }
 
-        public static byte GetByteValue(this Enum enumValue)
-        {
-            try
-            {
-                return Convert.ToByte(enumValue);
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.Message);
-            }
-
-            return 0x00;
-        }
-
     }
 }

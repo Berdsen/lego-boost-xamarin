@@ -40,7 +40,7 @@ namespace LegoBoost.Xamarin.Model
                             return;
                         }
 
-                        if (!(response is HubActionResponseMessage message) || message.MessageType != Core.Model.CommunicationProtocol.Hub.Action.Command || message.Action != referenceResponseByte)
+                        if (!(response is HubActionResponseMessage message) || message.MessageType != Core.Model.CommunicationProtocol.Hub.Action.Command || (byte)message.Action != referenceResponseByte)
                         {
                             // not my message :P
                             return;

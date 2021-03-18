@@ -70,11 +70,11 @@ namespace LegoBoost.Xamarin.Model
             {
                 switch (attachedIOMessage.Event)
                 {
-                    case (byte)Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.DetachedIO:
+                    case Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.DetachedIO:
                         RemoveIODevice(attachedIOMessage);
                         break;
-                    case (byte)Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedIO:
-                    case (byte)Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedVirtualIO:
+                    case Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedIO:
+                    case Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedVirtualIO:
                         AddIODevice(attachedIOMessage);
                         break;
                 }
@@ -83,7 +83,7 @@ namespace LegoBoost.Xamarin.Model
 
         private void AddIODevice(HubAttachedIOResponseMessage message)
         {
-            if (message.Event == (byte)Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedVirtualIO)
+            if (message.Event == Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedVirtualIO)
             {
 
             }
