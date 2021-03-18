@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LegoBoost.Core.Model.Constants;
+using LegoBoost.Core.Model.CommunicationProtocol;
 
 namespace LegoBoost.Core.Model.Responses
 {
@@ -31,11 +29,11 @@ namespace LegoBoost.Core.Model.Responses
 
             switch (Event)
             {
-                case HubAttachedIO.EventBytes.AttachedIO:
+                case (byte)Hub.AttachedIO.Event.AttachedIO:
                     if (MessageLength < 15) throw new Exception("Wrong Response Message type");
                     ReadAttachedIOEvent();
                     break;
-                case HubAttachedIO.EventBytes.AttachedVirtualIO:
+                case (byte)Hub.AttachedIO.Event.AttachedVirtualIO:
                     if (MessageLength < 9) throw new Exception("Wrong Response Message type");
                     ReadAttachedVirtualIOEvent();
                     break;

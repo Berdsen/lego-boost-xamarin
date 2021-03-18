@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:constants="clr-namespace:LegoBoost.Core.Model.Constants;assembly=LegoBoost.Core"
+             xmlns:communicationProtocol="clr-namespace:LegoBoost.Core.Model.CommunicationProtocol;assembly=LegoBoost.Core"
              x:Class="LegoBoostDemo.MainPage">
 
     <StackLayout>
@@ -35,18 +35,12 @@
                 Command="{Binding BlinkCommand}" />
 
         <Button Grid.Row="0" Grid.Column="1" Text="Red"
-                Command="{Binding ColorCommand}" >
-            <Button.CommandParameter>
-                <constants:HubColors>Red</constants:HubColors>
-            </Button.CommandParameter>
+                Command="{Binding ColorCommand}" CommandParameter="{Binding Converter={StaticResource HubColorConverter}, ConverterParameter=Red}">
         </Button>
 
         <Button Grid.Row="0" Grid.Column="1" Text="Blue"
-                Command="{Binding ColorCommand}" >
-            <Button.CommandParameter>
-                <constants:HubColors>Blue</constants:HubColors>
-            </Button.CommandParameter>
-        </Button>
+                Command="{Binding ColorCommand}" CommandParameter="{Binding Converter={StaticResource HubColorConverter}, ConverterParameter=Blue}">
+        </Button> 
 
         <Button Grid.Row="0" Grid.Column="1" Text="Request device name"
                 Command="{Binding RequestDeviceNameCommand}" />

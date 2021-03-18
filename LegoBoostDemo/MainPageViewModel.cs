@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
-using LegoBoost.Core.Model.Constants;
+using LegoBoost.Core.Model.CommunicationProtocol;
 using LegoBoost.Core.Services;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
@@ -74,10 +74,8 @@ namespace LegoBoostDemo
 
         private async void SetColor(object color)
         {
-            if (!(color is HubColors bc)) return;
-
             userDialogs.ShowLoading("Set color");
-            await legoService.SetColorAsync(bc).ConfigureAwait(false);
+            await legoService.SetColorAsync((Hub.Color)color).ConfigureAwait(false);
             userDialogs.HideLoading();
         }
 
