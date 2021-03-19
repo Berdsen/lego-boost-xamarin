@@ -1,5 +1,6 @@
 ﻿using System;
 using LegoBoost.Core.Model.CommunicationProtocol;
+using Version = LegoBoost.Core.Model.CommunicationProtocol.Version;
 
 namespace LegoBoost.Core.Model.Responses
 {
@@ -12,13 +13,13 @@ namespace LegoBoost.Core.Model.Responses
         // should we use short or ushort?
         public Hub.AttachedIO.Type IOTypeId { get; private set; }
 
-        public uint HardwareRevision { get; private set; }
+        public Version HardwareRevision { get; private set; }
 
-        public uint SoftwareRevision { get; private set; }
+        public Version SoftwareRevision { get; private set; }
 
-        public byte PortIdA { get; private set; }
+        public byte PortA { get; private set; }
 
-        public byte PortIdB { get; private set; }
+        public byte PortB { get; private set; }
 
         public HubAttachedIOResponseMessage(byte[] data) : base(data)
         {
@@ -43,15 +44,17 @@ namespace LegoBoost.Core.Model.Responses
         private void ReadAttachedIOEvent()
         {
             this.IOTypeId = (Hub.AttachedIO.Type) BitConverter.ToUInt16(MessagePayload.ToArray(), 2);
-            this.HardwareRevision = BitConverter.ToUInt32(MessagePayload.ToArray(), 4);
-            this.SoftwareRevision = BitConverter.ToUInt32(MessagePayload.ToArray(), 8);
+
+            // it's mentioned in the docs, that version is little endian. So the version expects the msb at last param
+            this.HardwareRevision = new Version(MessagePayload[4], MessagePayload[5], MessagePayload[6], MessagePayload[7]);
+            this.SoftwareRevision = new Version(MessagePayload[8], MessagePayload[9], MessagePayload[10], MessagePayload[11]);
         }
 
         private void ReadAttachedVirtualIOEvent()
         {
             this.IOTypeId = (Hub.AttachedIO.Type) BitConverter.ToUInt16(MessagePayload.ToArray(), 2);
-            this.PortIdA = MessagePayload[4];
-            this.PortIdB = MessagePayload[5];
+            this.PortA = MessagePayload[4];
+            this.PortB = MessagePayload[5];
         }
     }
 }

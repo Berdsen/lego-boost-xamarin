@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LegoBoost.Core.Model.CommunicationProtocol;
+using LegoBoost.Core.Model;
 using LegoBoost.Core.Services;
 using LegoBoost.Core.Utilities;
 using Plugin.BLE.Abstractions;
@@ -122,6 +122,18 @@ namespace LegoBoost.Xamarin.Services
             return await RequestDeviceNameAsync().ConfigureAwait(false);
         }
 
+        public List<AttachedIO> GetIODevices()
+        {
+            var lists = hub.IODevices.Values;
+            List<AttachedIO> returnValue = new List<AttachedIO>();
+            foreach (var list in lists)
+            {
+                returnValue.AddRange(list);
+            }
+
+            return returnValue;
+        }
+
         private async Task DisconnectActiveDeviceAsync(bool shutDown = false)
         {
             if (connectedDevice != null)
@@ -165,13 +177,16 @@ namespace LegoBoost.Xamarin.Services
                 connectedDeviceCharacteristic = await connectedDeviceService.GetCharacteristicAsync(characteristicsId).ConfigureAwait(false);
                 if (connectedDeviceCharacteristic == null) return false;
 
-                await InitializationSequenceAsync().ConfigureAwait(false);
-
                 await connectedDeviceCharacteristic.StartUpdatesAsync().ConfigureAwait(false);
 
                 hub = new Hub(connectedDeviceCharacteristic);
 
-                // executing the following command will result in an CommandNotRecognized error. Don't know why, but can be used here to simulate real error :D
+                // we need to execute a command in a specified timeframe (couldn't find anything in the docs).
+                // Otherwise the hub will auto disconnect.
+                // So we request the device name after the connection is initialized and everything is set up.
+                var deviceName = await RequestDeviceNameAsync().ConfigureAwait(false);
+
+                // executing the following command will result in an CommandNotRecognized error. Don't know why, but can be used here to "simulate" a real error :D
                 // await hub.Properties[HubProperties.PropertyNames.HardwareNetworkFamily].GetPropertyValueAsync().ConfigureAwait(false);
 
                 return true;

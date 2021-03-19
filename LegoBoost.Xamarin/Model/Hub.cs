@@ -3,6 +3,7 @@ using Plugin.BLE.Abstractions.EventArgs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LegoBoost.Core.Model;
 using LegoBoost.Core.Model.Responses;
 using LegoBoost.Core.Utilities;
 
@@ -16,7 +17,7 @@ namespace LegoBoost.Xamarin.Model
 
         public Dictionary<string, HubAction> Actions { get; }
 
-        public Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<byte>> IODevices { get; }
+        public Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<AttachedIO>> IODevices { get; }
 
         public Hub(ICharacteristic hubCharacteristic)
         {
@@ -25,7 +26,7 @@ namespace LegoBoost.Xamarin.Model
 
             Properties = new Dictionary<string, HubProperty>();
             Actions = new Dictionary<string, HubAction>();
-            IODevices = new Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<byte>>();
+            IODevices = new Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<AttachedIO>>();
 
             InitializeProperties();
             InitializeActions();
@@ -83,17 +84,19 @@ namespace LegoBoost.Xamarin.Model
 
         private void AddIODevice(HubAttachedIOResponseMessage message)
         {
+            if (!IODevices.ContainsKey(message.IOTypeId))
+            {
+                IODevices.Add(message.IOTypeId, new List<AttachedIO>());
+            }
+
             if (message.Event == Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedVirtualIO)
             {
-
+                IODevices[message.IOTypeId].Add(new VirtualDevice(message.IOTypeId, message.PortId, message.PortA, message.PortB));
             }
-
-            if (!IODevices.ContainsKey((Core.Model.CommunicationProtocol.Hub.AttachedIO.Type)message.IOTypeId))
+            else
             {
-                IODevices.Add((Core.Model.CommunicationProtocol.Hub.AttachedIO.Type)message.IOTypeId, new List<byte>());
+                IODevices[message.IOTypeId].Add(new RealDevice(message.IOTypeId, message.PortId, message.HardwareRevision, message.SoftwareRevision));
             }
-
-            IODevices[(Core.Model.CommunicationProtocol.Hub.AttachedIO.Type)message.IOTypeId].Add(message.PortId);
         }
 
         private void RemoveIODevice(HubAttachedIOResponseMessage attachedIOMessage)

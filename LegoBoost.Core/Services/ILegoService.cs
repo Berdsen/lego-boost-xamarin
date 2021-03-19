@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Dynamic;
+using System.Threading.Tasks;
+using LegoBoost.Core.Model;
 using LegoBoost.Core.Model.CommunicationProtocol;
 
 namespace LegoBoost.Core.Services
@@ -20,5 +23,7 @@ namespace LegoBoost.Core.Services
         Task<string> RequestDeviceNameAsync();
 
         Task<string> SetDeviceNameAsync(string newDeviceName);
+
+        List<AttachedIO> GetIODevices();
     }
 }
