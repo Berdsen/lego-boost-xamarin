@@ -111,7 +111,7 @@ namespace LegoBoost.Xamarin.Model
             List<byte> payLoad = new List<byte>() { property.ReferenceByte, (byte)Core.Model.CommunicationProtocol.Hub.Property.Operation.Set} ;
             payLoad.AddRange(data);
 
-            var bytes = DataCreator.CreateCommandBytes(Core.Model.CommunicationProtocol.Hub.Property.Command, payLoad.ToArray());
+            var bytes = DataCreator.CreateCommandBytes(Core.Model.CommunicationProtocol.Hub.MessageCommand.Property, payLoad.ToArray());
             return await hubCharacteristic.WriteAsync(bytes).ConfigureAwait(false);
         }
 

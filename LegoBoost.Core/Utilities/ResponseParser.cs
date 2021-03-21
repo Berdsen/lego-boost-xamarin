@@ -11,17 +11,16 @@ namespace LegoBoost.Core.Utilities
 
             switch (characteristicValue[2])
             {
-                case Hub.Property.Command:
+                case Hub.MessageCommand.Property:
                     return new HubPropertyResponseMessage(characteristicValue);
-                case Hub.Action.Command:
+                case Hub.MessageCommand.Action:
                     return new HubActionResponseMessage(characteristicValue);
-                case Hub.AttachedIO.Command:
+                case Hub.MessageCommand.AttachedIO:
                     return new HubAttachedIOResponseMessage(characteristicValue);
-                case Hub.Error.Command:
+                case Hub.MessageCommand.Error:
                     return new GenericErrorResponseMessage(characteristicValue);
-                case Hub.PortOutput.ResponseCommand:
-                    // TODO: hier weitermachen
-                    return new GenericErrorResponseMessage(characteristicValue);
+                case Hub.MessageCommand.PortOutputFeedback:
+                    return new PortOutputFeedbackResponseMessage(characteristicValue);
             }
 
             return null;

@@ -89,7 +89,7 @@ namespace LegoBoost.Xamarin.Services
             return InitializationSequenceAsync();
         }
 
-        public Task SetColorAsync(CPHub.Color color)
+        public Task<bool> SetColorAsync(CPHub.Color color)
         {
             return WriteColorAsync(color);
         }
@@ -186,7 +186,7 @@ namespace LegoBoost.Xamarin.Services
                 // Otherwise the hub will auto disconnect.
                 // So we request the device name after the connection is initialized and everything is set up.
                 var deviceName = await RequestDeviceNameAsync().ConfigureAwait(false);
-
+                
                 // executing the following command will result in an CommandNotRecognized error. Don't know why, but can be used here to "simulate" a real error :D
                 // await hub.Properties[HubProperties.PropertyNames.HardwareNetworkFamily].GetPropertyValueAsync().ConfigureAwait(false);
 
@@ -234,13 +234,9 @@ namespace LegoBoost.Xamarin.Services
 
             var device = GetDeviceByType(CPHub.AttachedIO.Type.RGBLight);
 
-            await device.PortOutputCommandAsync(new StartupAndCompletionInfo(StartupAndCompletionInfo.Startup.ExecuteImmediately, StartupAndCompletionInfo.Completion.CommandFeedback), CPHub.PortOutput.SubCommands.WriteDirectModeData, new byte[2] {0x00, (byte) color}).ConfigureAwait(false);
-            // var bytes = new byte[] {0x08, 0x00, 0x81, 0x32, 0x11, 0x51, 0x00, (byte)color};
-            // var bytes = CreateCommandBytes(0x81, new byte[] {0x32, 0x11, 0x51, 0x00, (byte) color});
+            var result = await device.PortOutputCommandAsync(new StartupAndCompletionInfo(StartupAndCompletionInfo.Startup.ExecuteImmediately, StartupAndCompletionInfo.Completion.CommandFeedback), CPHub.PortOutput.SubCommands.WriteDirectModeData, new byte[2] {0x00, (byte) color}).ConfigureAwait(false);
 
-            // return connectedDeviceCharacteristic.WriteAsync(bytes);
-
-            return true;
+            return result != null && result.PortFeedback.HasFlag(CPHub.PortOutputFeedback.Message.BufferEmptyCommandInCompleted);
         }
 
         private IAttachedIO GetDeviceByType(CPHub.AttachedIO.Type deviceType)

@@ -18,7 +18,7 @@ namespace LegoBoost.Core.Services
 
         Task BlinkAsync();
 
-        Task SetColorAsync(Hub.Color color);
+        Task<bool> SetColorAsync(Hub.Color color);
 
         Task<string> RequestDeviceNameAsync();
 

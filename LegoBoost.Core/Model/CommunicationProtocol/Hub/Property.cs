@@ -6,8 +6,6 @@ namespace LegoBoost.Core.Model.CommunicationProtocol
     {
         public static class Property
         {
-            public const byte Command = 0x01;
-
             public enum Name : byte
             {
                 [StringValue(nameof(AdvertisingName))]

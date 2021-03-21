@@ -4,8 +4,6 @@
     {
         public static class Error
         {
-            public const byte Command = 0x05;
-
             public enum Code : byte
             {
                 Ack = 0x01,

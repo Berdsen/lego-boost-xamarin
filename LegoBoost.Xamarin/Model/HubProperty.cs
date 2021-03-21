@@ -52,20 +52,20 @@ namespace LegoBoost.Xamarin.Model
 
             return TaskBuilder.CreateTaskAsync<HubPropertyResponseMessage>(() =>
                 {
-                    var bytes = DataCreator.CreateCommandBytes(CPHub.Property.Command, new byte[] { ReferenceByte, (byte)CPHub.Property.Operation.RequestUpdate });
+                    var bytes = DataCreator.CreateCommandBytes(CPHub.MessageCommand.Property, new byte[] { ReferenceByte, (byte)CPHub.Property.Operation.RequestUpdate });
                     hubCharacteristic.WriteAsync(bytes);
                 },
                 (complete, reject) => (sender, args) =>
                 {
                     var response = ResponseParser.ParseMessage(args.Characteristic.Value);
 
-                    if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == CPHub.Property.Command)
+                    if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == CPHub.MessageCommand.Property)
                     {
                         reject(DataCreator.CreateExceptionFromMessage(errorResponse));
                         return;
                     }
 
-                    if (!(response is HubPropertyResponseMessage message) || message.MessageType != CPHub.Property.Command || (byte) message.Property != ReferenceByte || message.Method != CPHub.Property.Operation.Update)
+                    if (!(response is HubPropertyResponseMessage message) || message.MessageType != CPHub.MessageCommand.Property || (byte) message.Property != ReferenceByte || message.Method != CPHub.Property.Operation.Update)
                     {
                         // not my message :P
                         return;

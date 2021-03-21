@@ -10,6 +10,6 @@ namespace LegoBoost.Core.Model
         
         byte PortId { get; }
 
-        Task<HubPropertyResponseMessage> PortOutputCommandAsync(StartupAndCompletionInfo startupAndCompletionInfo, Hub.PortOutput.SubCommands subCommand, byte[] payload);
+        Task<PortOutputFeedbackResponseMessage> PortOutputCommandAsync(StartupAndCompletionInfo startupAndCompletionInfo, Hub.PortOutput.SubCommands subCommand, byte[] payload);
     }
 }

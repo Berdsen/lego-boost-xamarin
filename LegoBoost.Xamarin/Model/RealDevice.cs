@@ -32,14 +32,14 @@ namespace LegoBoost.Xamarin.Model
             SoftwareVersion = swVersion;
         }
 
-        public Task<HubPropertyResponseMessage> PortOutputCommandAsync(StartupAndCompletionInfo startupAndCompletionInfo, CPHub.PortOutput.SubCommands subCommand, byte[] payload)
+        public Task<PortOutputFeedbackResponseMessage> PortOutputCommandAsync(StartupAndCompletionInfo startupAndCompletionInfo, CPHub.PortOutput.SubCommands subCommand, byte[] payload)
         {
             var commandPayload = new List<byte>() { PortId, startupAndCompletionInfo.InfoByte, (byte)subCommand };
             commandPayload.AddRange(payload);
 
-            var bytes = DataCreator.CreateCommandBytes(CPHub.PortOutput.Command, commandPayload.ToArray());
+            var bytes = DataCreator.CreateCommandBytes(CPHub.MessageCommand.PortOutput, commandPayload.ToArray());
 
-            return TaskBuilder.CreateTaskAsync<HubPropertyResponseMessage>(() =>
+            return TaskBuilder.CreateTaskAsync<PortOutputFeedbackResponseMessage>(() =>
                 {
                     hubCharacteristic.WriteAsync(bytes);
                 },
@@ -47,13 +47,13 @@ namespace LegoBoost.Xamarin.Model
                 {
                     var response = ResponseParser.ParseMessage(args.Characteristic.Value);
 
-                    if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == CPHub.Property.Command)
+                    if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == CPHub.MessageCommand.PortOutput)
                     {
                         reject(DataCreator.CreateExceptionFromMessage(errorResponse));
                         return;
                     }
 
-                    if (response is HubPropertyResponseMessage message)
+                    if (response is PortOutputFeedbackResponseMessage message)
                     {
                         complete(message);
                     }

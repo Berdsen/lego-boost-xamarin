@@ -6,8 +6,6 @@ namespace LegoBoost.Core.Model.CommunicationProtocol
     {
         public static class Action
         {
-            public const byte Command = 0x02;
-
             public enum Name : byte
             {
                 // DOWNSTREAM 0x00 - 0x2F
@@ -35,5 +33,6 @@ namespace LegoBoost.Core.Model.CommunicationProtocol
                 HubWillGoIntoBootMode = 0x32
             }
         }
+
     }
 }

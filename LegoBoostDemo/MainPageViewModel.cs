@@ -75,9 +75,11 @@ namespace LegoBoostDemo
         private async void SetColor(object color)
         {
             userDialogs.ShowLoading("Set color");
-            await legoService.SetColorAsync((Hub.Color)color).ConfigureAwait(false);
+            var result = await legoService.SetColorAsync((Hub.Color)color).ConfigureAwait(false);
             userDialogs.HideLoading();
-        }
+
+            userDialogs.Toast($"Color setting {(result ? "was successful" : "has failed")}");
+        } 
 
         private async void Blink()
         {
