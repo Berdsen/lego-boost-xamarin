@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Dynamic;
 using System.Threading.Tasks;
 using LegoBoost.Core.Model;
 using LegoBoost.Core.Model.CommunicationProtocol;
 
-namespace LegoBoost.Core.Services
+namespace LegoBoost.Xamarin.Services
 {
     public interface ILegoService
     {

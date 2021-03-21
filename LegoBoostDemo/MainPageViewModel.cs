@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using LegoBoost.Core.Model.CommunicationProtocol;
-using LegoBoost.Core.Services;
+using LegoBoost.Xamarin.Services;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Prism.Commands;

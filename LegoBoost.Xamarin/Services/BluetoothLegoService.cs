@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LegoBoost.Core.Model;
 using LegoBoost.Core.Model.CommunicationProtocol;
-using LegoBoost.Core.Services;
 using LegoBoost.Core.Utilities;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;

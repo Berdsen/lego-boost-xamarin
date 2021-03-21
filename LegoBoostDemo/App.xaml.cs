@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Acr.UserDialogs;
-using LegoBoost.Core.Services;
 using LegoBoost.Xamarin.Services;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
