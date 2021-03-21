@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using LegoBoost.Core.Model.CommunicationProtocol;
-using LegoBoost.Core.Services;
+using LegoBoost.Xamarin.Services;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Prism.Commands;
@@ -75,9 +75,11 @@ namespace LegoBoostDemo
         private async void SetColor(object color)
         {
             userDialogs.ShowLoading("Set color");
-            await legoService.SetColorAsync((Hub.Color)color).ConfigureAwait(false);
+            var result = await legoService.SetColorAsync((Hub.Color)color).ConfigureAwait(false);
             userDialogs.HideLoading();
-        }
+
+            userDialogs.Toast($"Color setting {(result ? "was successful" : "has failed")}");
+        } 
 
         private async void Blink()
         {

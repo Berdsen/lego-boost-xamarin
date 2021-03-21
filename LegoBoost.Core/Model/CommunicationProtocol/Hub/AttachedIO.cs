@@ -4,8 +4,6 @@
     {
         public static class AttachedIO
         {
-            public const byte Command = 0x04;
-
             public enum Event : byte
             {
                 DetachedIO = 0x00,

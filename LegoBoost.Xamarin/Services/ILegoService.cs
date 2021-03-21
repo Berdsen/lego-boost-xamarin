@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Dynamic;
 using System.Threading.Tasks;
 using LegoBoost.Core.Model;
 using LegoBoost.Core.Model.CommunicationProtocol;
 
-namespace LegoBoost.Core.Services
+namespace LegoBoost.Xamarin.Services
 {
     public interface ILegoService
     {
@@ -18,12 +17,12 @@ namespace LegoBoost.Core.Services
 
         Task BlinkAsync();
 
-        Task SetColorAsync(Hub.Color color);
+        Task<bool> SetColorAsync(Hub.Color color);
 
         Task<string> RequestDeviceNameAsync();
 
         Task<string> SetDeviceNameAsync(string newDeviceName);
 
-        List<AttachedIO> GetIODevices();
+        List<IAttachedIO> GetIODevices();
     }
 }

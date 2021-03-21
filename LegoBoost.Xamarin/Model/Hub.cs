@@ -17,7 +17,7 @@ namespace LegoBoost.Xamarin.Model
 
         public Dictionary<string, HubAction> Actions { get; }
 
-        public Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<AttachedIO>> IODevices { get; }
+        public Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<IAttachedIO>> IODevices { get; }
 
         public Hub(ICharacteristic hubCharacteristic)
         {
@@ -26,7 +26,7 @@ namespace LegoBoost.Xamarin.Model
 
             Properties = new Dictionary<string, HubProperty>();
             Actions = new Dictionary<string, HubAction>();
-            IODevices = new Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<AttachedIO>>();
+            IODevices = new Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<IAttachedIO>>();
 
             InitializeProperties();
             InitializeActions();
@@ -86,7 +86,7 @@ namespace LegoBoost.Xamarin.Model
         {
             if (!IODevices.ContainsKey(message.IOTypeId))
             {
-                IODevices.Add(message.IOTypeId, new List<AttachedIO>());
+                IODevices.Add(message.IOTypeId, new List<IAttachedIO>());
             }
 
             if (message.Event == Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedVirtualIO)
@@ -111,7 +111,7 @@ namespace LegoBoost.Xamarin.Model
             List<byte> payLoad = new List<byte>() { property.ReferenceByte, (byte)Core.Model.CommunicationProtocol.Hub.Property.Operation.Set} ;
             payLoad.AddRange(data);
 
-            var bytes = DataCreator.CreateCommandBytes(Core.Model.CommunicationProtocol.Hub.Property.Command, payLoad.ToArray());
+            var bytes = DataCreator.CreateCommandBytes(Core.Model.CommunicationProtocol.Hub.MessageCommand.Property, payLoad.ToArray());
             return await hubCharacteristic.WriteAsync(bytes).ConfigureAwait(false);
         }
 

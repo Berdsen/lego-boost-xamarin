@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LegoBoost.Core.Model;
-using LegoBoost.Core.Services;
+using LegoBoost.Core.Model.CommunicationProtocol;
 using LegoBoost.Core.Utilities;
+using LegoBoost.Xamarin.Model.Extensions;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using ScanMode = Plugin.BLE.Abstractions.Contracts.ScanMode;
@@ -88,7 +89,7 @@ namespace LegoBoost.Xamarin.Services
             return InitializationSequenceAsync();
         }
 
-        public Task SetColorAsync(CPHub.Color color)
+        public Task<bool> SetColorAsync(CPHub.Color color)
         {
             return WriteColorAsync(color);
         }
@@ -122,10 +123,10 @@ namespace LegoBoost.Xamarin.Services
             return await RequestDeviceNameAsync().ConfigureAwait(false);
         }
 
-        public List<AttachedIO> GetIODevices()
+        public List<IAttachedIO> GetIODevices()
         {
             var lists = hub.IODevices.Values;
-            List<AttachedIO> returnValue = new List<AttachedIO>();
+            List<IAttachedIO> returnValue = new List<IAttachedIO>();
             foreach (var list in lists)
             {
                 returnValue.AddRange(list);
@@ -185,7 +186,7 @@ namespace LegoBoost.Xamarin.Services
                 // Otherwise the hub will auto disconnect.
                 // So we request the device name after the connection is initialized and everything is set up.
                 var deviceName = await RequestDeviceNameAsync().ConfigureAwait(false);
-
+                
                 // executing the following command will result in an CommandNotRecognized error. Don't know why, but can be used here to "simulate" a real error :D
                 // await hub.Properties[HubProperties.PropertyNames.HardwareNetworkFamily].GetPropertyValueAsync().ConfigureAwait(false);
 
@@ -227,12 +228,25 @@ namespace LegoBoost.Xamarin.Services
             await WriteColorAsync(CPHub.Color.Yellow).ConfigureAwait(false);
         }
 
-        private Task<bool> WriteColorAsync(CPHub.Color color)
+        private async Task<bool> WriteColorAsync(CPHub.Color color)
         {
-            // var bytes = new byte[] {0x08, 0x00, 0x81, 0x32, 0x11, 0x51, 0x00, (byte)color};
-            var bytes = CreateCommandBytes(0x81, new byte[] {0x32, 0x11, 0x51, 0x00, (byte) color});
+            if (hub == null) return false;
 
-            return connectedDeviceCharacteristic.WriteAsync(bytes);
+            var device = GetDeviceByType(CPHub.AttachedIO.Type.RGBLight);
+
+            var result = await device.PortOutputCommandAsync(connectedDeviceCharacteristic, new StartupAndCompletionInfo(StartupAndCompletionInfo.Startup.ExecuteImmediately, StartupAndCompletionInfo.Completion.CommandFeedback), CPHub.PortOutput.SubCommands.WriteDirectModeData, new byte[2] {0x00, (byte) color}).ConfigureAwait(false);
+
+            return result != null && result.PortFeedback.HasFlag(CPHub.PortOutputFeedback.Message.BufferEmptyCommandInCompleted);
+        }
+
+        private IAttachedIO GetDeviceByType(CPHub.AttachedIO.Type deviceType)
+        {
+            if (hub != null && hub.IODevices.ContainsKey(deviceType))
+            {
+                return hub.IODevices[deviceType][0];
+            }
+
+            return null;
         }
 
         private byte[] CreateCommandBytes(byte command, byte[] payload)

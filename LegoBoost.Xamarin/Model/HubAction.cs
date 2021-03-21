@@ -26,7 +26,7 @@ namespace LegoBoost.Xamarin.Model
         {
             if (ExpectsResponse)
             {
-                var commandBytes = DataCreator.CreateCommandBytes(CPHub.Action.Command, new byte[] { ReferenceByte });
+                var commandBytes = DataCreator.CreateCommandBytes(CPHub.MessageCommand.Action, new byte[] { ReferenceByte });
                 var result = await TaskBuilder.CreateTaskAsync<HubActionResponseMessage>(() =>
                     {
                         hubCharacteristic.WriteAsync(commandBytes);
@@ -35,13 +35,13 @@ namespace LegoBoost.Xamarin.Model
                     {
                         var response = ResponseParser.ParseMessage(args.Characteristic.Value);
 
-                        if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == CPHub.Action.Command)
+                        if (response is GenericErrorResponseMessage errorResponse && errorResponse.IssuedCommand.Length > 0 && errorResponse.IssuedCommand[0] == CPHub.MessageCommand.Action)
                         {
                             reject(DataCreator.CreateExceptionFromMessage(errorResponse));
                             return;
                         }
 
-                        if (!(response is HubActionResponseMessage message) || message.MessageType != CPHub.Action.Command || (byte)message.Action != referenceResponseByte)
+                        if (!(response is HubActionResponseMessage message) || message.MessageType != CPHub.MessageCommand.Action || (byte)message.Action != referenceResponseByte)
                         {
                             // not my message :P
                             return;
@@ -55,7 +55,7 @@ namespace LegoBoost.Xamarin.Model
             }
             else
             {
-                var bytes = DataCreator.CreateCommandBytes(CPHub.Action.Command, new byte[] { ReferenceByte });
+                var bytes = DataCreator.CreateCommandBytes(CPHub.MessageCommand.Action, new byte[] { ReferenceByte });
                 var result = await hubCharacteristic.WriteAsync(bytes).ConfigureAwait(false);
                 return new HubActionResponseMessage(bytes);
             }
