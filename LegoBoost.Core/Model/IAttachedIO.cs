@@ -9,7 +9,5 @@ namespace LegoBoost.Core.Model
         CommunicationProtocol.Hub.AttachedIO.Type DeviceType { get; }
         
         byte PortId { get; }
-
-        Task<PortOutputFeedbackResponseMessage> PortOutputCommandAsync(StartupAndCompletionInfo startupAndCompletionInfo, Hub.PortOutput.SubCommands subCommand, byte[] payload);
     }
 }

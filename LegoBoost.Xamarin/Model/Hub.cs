@@ -91,11 +91,11 @@ namespace LegoBoost.Xamarin.Model
 
             if (message.Event == Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedVirtualIO)
             {
-                IODevices[message.IOTypeId].Add(new VirtualDevice(hubCharacteristic, message.IOTypeId, message.PortId, message.PortA, message.PortB));
+                IODevices[message.IOTypeId].Add(new VirtualDevice(message.IOTypeId, message.PortId, message.PortA, message.PortB));
             }
             else
             {
-                IODevices[message.IOTypeId].Add(new RealDevice(hubCharacteristic, message.IOTypeId, message.PortId, message.HardwareRevision, message.SoftwareRevision));
+                IODevices[message.IOTypeId].Add(new RealDevice(message.IOTypeId, message.PortId, message.HardwareRevision, message.SoftwareRevision));
             }
         }
 

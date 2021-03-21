@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LegoBoost.Core.Model;
 using LegoBoost.Core.Model.CommunicationProtocol;
 using LegoBoost.Core.Utilities;
+using LegoBoost.Xamarin.Model.Extensions;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using ScanMode = Plugin.BLE.Abstractions.Contracts.ScanMode;
@@ -233,7 +234,7 @@ namespace LegoBoost.Xamarin.Services
 
             var device = GetDeviceByType(CPHub.AttachedIO.Type.RGBLight);
 
-            var result = await device.PortOutputCommandAsync(new StartupAndCompletionInfo(StartupAndCompletionInfo.Startup.ExecuteImmediately, StartupAndCompletionInfo.Completion.CommandFeedback), CPHub.PortOutput.SubCommands.WriteDirectModeData, new byte[2] {0x00, (byte) color}).ConfigureAwait(false);
+            var result = await device.PortOutputCommandAsync(connectedDeviceCharacteristic, new StartupAndCompletionInfo(StartupAndCompletionInfo.Startup.ExecuteImmediately, StartupAndCompletionInfo.Completion.CommandFeedback), CPHub.PortOutput.SubCommands.WriteDirectModeData, new byte[2] {0x00, (byte) color}).ConfigureAwait(false);
 
             return result != null && result.PortFeedback.HasFlag(CPHub.PortOutputFeedback.Message.BufferEmptyCommandInCompleted);
         }
