@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LegoBoost.Core.Model;
+using LegoBoost.Core.Model.CommunicationProtocol;
 using LegoBoost.Core.Services;
 using LegoBoost.Core.Utilities;
 using Plugin.BLE.Abstractions;
@@ -122,10 +123,10 @@ namespace LegoBoost.Xamarin.Services
             return await RequestDeviceNameAsync().ConfigureAwait(false);
         }
 
-        public List<AttachedIO> GetIODevices()
+        public List<IAttachedIO> GetIODevices()
         {
             var lists = hub.IODevices.Values;
-            List<AttachedIO> returnValue = new List<AttachedIO>();
+            List<IAttachedIO> returnValue = new List<IAttachedIO>();
             foreach (var list in lists)
             {
                 returnValue.AddRange(list);
@@ -227,12 +228,29 @@ namespace LegoBoost.Xamarin.Services
             await WriteColorAsync(CPHub.Color.Yellow).ConfigureAwait(false);
         }
 
-        private Task<bool> WriteColorAsync(CPHub.Color color)
+        private async Task<bool> WriteColorAsync(CPHub.Color color)
         {
-            // var bytes = new byte[] {0x08, 0x00, 0x81, 0x32, 0x11, 0x51, 0x00, (byte)color};
-            var bytes = CreateCommandBytes(0x81, new byte[] {0x32, 0x11, 0x51, 0x00, (byte) color});
+            if (hub == null) return false;
 
-            return connectedDeviceCharacteristic.WriteAsync(bytes);
+            var device = GetDeviceByType(CPHub.AttachedIO.Type.RGBLight);
+
+            await device.PortOutputCommandAsync(new StartupAndCompletionInfo(StartupAndCompletionInfo.Startup.ExecuteImmediately, StartupAndCompletionInfo.Completion.CommandFeedback), CPHub.PortOutput.SubCommands.WriteDirectModeData, new byte[2] {0x00, (byte) color}).ConfigureAwait(false);
+            // var bytes = new byte[] {0x08, 0x00, 0x81, 0x32, 0x11, 0x51, 0x00, (byte)color};
+            // var bytes = CreateCommandBytes(0x81, new byte[] {0x32, 0x11, 0x51, 0x00, (byte) color});
+
+            // return connectedDeviceCharacteristic.WriteAsync(bytes);
+
+            return true;
+        }
+
+        private IAttachedIO GetDeviceByType(CPHub.AttachedIO.Type deviceType)
+        {
+            if (hub != null && hub.IODevices.ContainsKey(deviceType))
+            {
+                return hub.IODevices[deviceType][0];
+            }
+
+            return null;
         }
 
         private byte[] CreateCommandBytes(byte command, byte[] payload)

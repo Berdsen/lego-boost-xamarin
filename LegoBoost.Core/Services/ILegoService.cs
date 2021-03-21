@@ -24,6 +24,6 @@ namespace LegoBoost.Core.Services
 
         Task<string> SetDeviceNameAsync(string newDeviceName);
 
-        List<AttachedIO> GetIODevices();
+        List<IAttachedIO> GetIODevices();
     }
 }

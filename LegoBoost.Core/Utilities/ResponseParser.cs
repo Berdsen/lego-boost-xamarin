@@ -19,6 +19,9 @@ namespace LegoBoost.Core.Utilities
                     return new HubAttachedIOResponseMessage(characteristicValue);
                 case Hub.Error.Command:
                     return new GenericErrorResponseMessage(characteristicValue);
+                case Hub.PortOutput.ResponseCommand:
+                    // TODO: hier weitermachen
+                    return new GenericErrorResponseMessage(characteristicValue);
             }
 
             return null;

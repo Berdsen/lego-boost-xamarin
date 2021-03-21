@@ -17,7 +17,7 @@ namespace LegoBoost.Xamarin.Model
 
         public Dictionary<string, HubAction> Actions { get; }
 
-        public Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<AttachedIO>> IODevices { get; }
+        public Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<IAttachedIO>> IODevices { get; }
 
         public Hub(ICharacteristic hubCharacteristic)
         {
@@ -26,7 +26,7 @@ namespace LegoBoost.Xamarin.Model
 
             Properties = new Dictionary<string, HubProperty>();
             Actions = new Dictionary<string, HubAction>();
-            IODevices = new Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<AttachedIO>>();
+            IODevices = new Dictionary<Core.Model.CommunicationProtocol.Hub.AttachedIO.Type, List<IAttachedIO>>();
 
             InitializeProperties();
             InitializeActions();
@@ -86,16 +86,16 @@ namespace LegoBoost.Xamarin.Model
         {
             if (!IODevices.ContainsKey(message.IOTypeId))
             {
-                IODevices.Add(message.IOTypeId, new List<AttachedIO>());
+                IODevices.Add(message.IOTypeId, new List<IAttachedIO>());
             }
 
             if (message.Event == Core.Model.CommunicationProtocol.Hub.AttachedIO.Event.AttachedVirtualIO)
             {
-                IODevices[message.IOTypeId].Add(new VirtualDevice(message.IOTypeId, message.PortId, message.PortA, message.PortB));
+                IODevices[message.IOTypeId].Add(new VirtualDevice(hubCharacteristic, message.IOTypeId, message.PortId, message.PortA, message.PortB));
             }
             else
             {
-                IODevices[message.IOTypeId].Add(new RealDevice(message.IOTypeId, message.PortId, message.HardwareRevision, message.SoftwareRevision));
+                IODevices[message.IOTypeId].Add(new RealDevice(hubCharacteristic, message.IOTypeId, message.PortId, message.HardwareRevision, message.SoftwareRevision));
             }
         }
 
